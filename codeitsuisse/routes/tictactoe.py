@@ -34,7 +34,7 @@ def get_id():
                     "position": "NW"
                 }
                 logging.info('Before sending')
-                x = requests.post(endpoint, data = to_post)
+                x = requests.post(endpoint, json = to_post)
                 logging.info('after sending')
                 updateBoard(board, "NW", player)
 
@@ -55,13 +55,13 @@ def get_id():
                         "action": 'putSymbol',
                         "position": move
                     }
-                    x = requests.post(endpoint, data = to_post)
+                    x = requests.post(endpoint, json = to_post)
                 else:
                     # TODO flip table
                     to_post = {
                         "action": "(╯°□°)╯︵ ┻━┻"
                     }
-                    x = requests.post(endpoint, data = to_post)
+                    x = requests.post(endpoint, sjon = to_post)
 
     # logging.info("My result :{}".format(result))
     return json.dumps(0)
