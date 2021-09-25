@@ -79,7 +79,10 @@ def handle_testcase(testcase):
             elif risk_level % 3 == 2:
                 risk_cost = "S"
             this_row.append(risk_cost)
-        grid_map.append(this_row)    
+        grid_map.append(this_row)   
+        
+    grid_map, _, _= make_grid(testcase) 
+    corner = math.ceil((end[1]+1)*1.5), math.ceil((end[0]+1)*1.5)
     
     letter_to_num = {
         "L": 3, 
@@ -106,7 +109,7 @@ def handle_testcase(testcase):
                 (y, x - 1),
             ]
         for nr, nc in next_positions:
-            if nr in [-1, ROWS*2] or nc in [-1, COLS*2]:
+            if nr in [-1, corner[1]] or nc in [-1, corner[0]]:
                 continue
             v = (nc, nr)
             new_d = distance + letter_to_num[grid_map[nr][nc]]
@@ -114,6 +117,7 @@ def handle_testcase(testcase):
                 heapq.heappush(pq, (new_d, v))
                 d[v] = new_d
                 prev[v] = u
+    print(d)
     v = end
     max_x, max_y = end
     while prev[v]:
@@ -126,7 +130,7 @@ def handle_testcase(testcase):
     final_grid = [row[:max_x+1] for row in grid_map[:max_y+1]]
     output = {
         "gridMap": final_grid,
-        "minimumCost": d[v]
+        "minimumCost": d[end]
     }
     return output
         
@@ -269,40 +273,44 @@ def handle_testcase(testcase):
 #     logging.info("My results :{}".format(results))
 #     return json.dumps(results)
 
-# def make_grid(data: dict):
-#     start = data['entryPoint']['first'], data['entryPoint']['second']
-#     end = data['targetPoint']['first'], data['targetPoint']['second']
+def make_grid(data: dict):
+    num_to_letter = {
+        1: "S",
+        2: "M",
+        3: 'L'
+    }
+    start = data['entryPoint']['first'], data['entryPoint']['second']
+    end = data['targetPoint']['first'], data['targetPoint']['second']
 
-#     depth = data['gridDepth']
-#     key = data['gridKey']
-#     h_stepper = data['horizontalStepper']
-#     v_stepper = data['verticalStepper']
+    depth = data['gridDepth']
+    key = data['gridKey']
+    h_stepper = data['horizontalStepper']
+    v_stepper = data['verticalStepper']
 
-#     corner = math.ceil((end[1]+1)*1.5), math.ceil((end[0]+1)*1.5)
-#     print(corner)
+    corner = math.ceil((end[1]+1)*1.5), math.ceil((end[0]+1)*1.5)
+    print(corner)
 
-#     grid = [[0]*corner[0] for i in range(corner[1])]
+    grid = [[0]*corner[0] for i in range(corner[1])]
 
-#     for row in range(corner[1]):
-#         for col in range(corner[0]):
-#             if (col, row) == start:
-#                 index = 0
-#             elif row == 0:
-#                 index = h_stepper * col
-#             elif col == 0:
-#                 index = v_stepper * row
-#             else:
-#                 index = grid[row][col-1] * grid[row-1][col]
+    for row in range(corner[1]):
+        for col in range(corner[0]):
+            if (col, row) == start:
+                index = 0
+            elif row == 0:
+                index = h_stepper * col
+            elif col == 0:
+                index = v_stepper * row
+            else:
+                index = grid[row][col-1] * grid[row-1][col]
 
-#             grid[row][col] = (index + depth) % key
+            grid[row][col] = (index + depth) % key
 
-#     for row in range(corner[1]):
-#         for col in range(corner[0]):
-#             grid[row][col] = 3 - grid[row][col] % 3
+    for row in range(corner[1]):
+        for col in range(corner[0]):
+            grid[row][col] = num_to_letter[3 - grid[row][col] % 3]
 
-#     # print(grid)
 
-#     return grid, start, end
+    return grid, start, end
 
 
 # DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
