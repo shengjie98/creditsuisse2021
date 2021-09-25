@@ -36,7 +36,7 @@ def get_id():
                     "position": "NW"
                 }
                 x = requests.post(play_end, json = to_post)
-                logging.info(x.status_code)
+                logging.info(x.status_code, to_post)
                 updateBoard(board, "NW", player)
 
         elif d.get('winner'):
@@ -56,15 +56,16 @@ def get_id():
                         "action": 'putSymbol',
                         "position": move
                     }
-                    x = requests.post(play_end, json = to_post)
-                    logging.info(x.status_code)
+                    x = requests.post(play_end, json=to_post)
+                    logging.info(x.status_code, to_post)
                 else:
                     # TODO flip table
                     to_post = {
                         "action": "(╯°□°)╯︵ ┻━┻"
                     }
                     x = requests.post(play_end, json = to_post)
-                    logging.info(x.status_code)
+                    logging.info(x.status_code, to_post)
+                    break
                     
 
     # logging.info("My result :{}".format(result))
