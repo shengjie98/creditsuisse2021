@@ -26,8 +26,8 @@ def parasite():
 
         output = {}
         output["room"] = room_number
-        output["p1"] = handleOne(grid, interestedIndividuals)
-        output["p2"] = handleTwo(grid)
+        output["p1"], output["p2"] = handleOneAndTwo(grid, interestedIndividuals)
+        # output["p2"] = handleTwo(grid)
         output["p3"] = handleThree(grid)
         output["p4"] = handleFour(grid)
 
@@ -36,7 +36,7 @@ def parasite():
     return json.dumps(ret)
 
 
-def handleOne(grid, interestedIndividuals):
+def handleOneAndTwo(grid, interestedIndividuals):
     """ Takes in grid of individuals and a list of interestedIndividuals, and outputs their final infection status  
     Parasite A can travel both horizontally and vertically. Calculate the time taken to infect a healthy person. Return -1 if person remains healthy or if the person is infected to begin with.
     """
@@ -55,50 +55,6 @@ def handleOne(grid, interestedIndividuals):
     "p1": { "0,2":  -1, "2,0":  -1, "1,2":  2},
 
     """
-    grid = deepcopy(grid)
-    ret = {}
-
-    # Check for coords of initial infected person
-    initial_infected = (-1, -1)
-    ROWS, COLS = len(grid), len(grid[0])
-    for r in range(ROWS):
-        for c in range(COLS):
-            if grid[r][c] == 3:
-                initial_infected = (r, c)
-                break
-        if initial_infected[0] != -1:
-            break
-
-    # Simulate infection
-    # Do bfs infection
-    queue = deque([initial_infected])
-    seen = {initial_infected}
-    depth = defaultdict(lambda: -1)
-    depth[initial_infected] = 0
-    while queue:
-        r, c = queue.popleft()
-        d = depth[(r, c)]
-        next_positions = [
-                (r + 1, c),
-                (r - 1, c),
-                (r, c + 1),
-                (r, c - 1),
-            ]
-        for nr, nc in next_positions:
-            if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
-                continue
-            if grid[nr][nc] != 1:
-                continue
-            seen.add((nr, nc))
-            queue.append((nr, nc))
-            depth[(nr, nc)] = d + 1
-    for s in interestedIndividuals:
-        x, y = map(int, s.split(','))
-        ret[s] = depth[(x, y)]
-
-    return ret
-
-def handleTwo(grid):
     grid = deepcopy(grid)
     ret = {}
 
@@ -131,17 +87,23 @@ def handleTwo(grid):
         for nr, nc in next_positions:
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
-            if grid[nr][nc] != 1:
-                continue
-            seen.add((nr, nc))
-            queue.append((nr, nc))
-            depth[(nr, nc)] = d + 1
+            if grid[nr][nc] in [1, 2]:
+                seen.add((nr, nc))
+                queue.append((nr, nc))
+                depth[(nr, nc)] = d + 1
+    for s in interestedIndividuals:
+        x, y = map(int, s.split(','))
+        if (x, y) in health:
+            ret[s] = depth[(x, y)]
+        else:
+            ret[s] = -1
+
     high = 0
     for x, y in health:
         if depth[(x,y)] == -1:
-            return -1
+            return ret, -1
         high = max(depth[(x,y)], high)
-    return high 
+    return ret, high 
 
 # def handleTwo(grid):
 #     """ Returns how many ticks needed to infect whole room with horizontal and vertical spreading. """
