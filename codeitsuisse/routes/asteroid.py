@@ -40,7 +40,7 @@ def ast(seq: str):
 
     res = {
         "input": seq,
-        "score": int(res[0]),
+        "score": res[0],
         "origin": origin
     }
     return res
