@@ -13,7 +13,7 @@ url = "https://cis2021-arena.herokuapp.com/quoridor/start/"
 play_url = "https://cis2021-arena.herokuapp.com/quoridor/play/"
 
 @app.route('/quoridor', methods=['POST'])
-def get_id():
+def get_quo():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     battleId = data['battleId']
