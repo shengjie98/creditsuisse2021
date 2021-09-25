@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def optopt():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
-    rng = helplah(**data)
+    rng = rngsus(**data)
     logging.info(f"rngsus has blessed :{rng}")
 
     return json.dumps(rng)
