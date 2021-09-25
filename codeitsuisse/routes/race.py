@@ -20,6 +20,13 @@ def race():
         racers[-1] = racers[-1].split('.')[0]
         all_racers.extend(racers)
     ctr = Counter(all_racers)
+    for line in lines:
+        winner = line.split('.')[-3].lstrip(' Winner of this race is ')
+        racers = line.lstrip('Your guess is ').split(', ')
+        max_racer = max([ctr[racer] for racer in racers])
+        ctr[winner] = max_racer
+    
+    
     swimmers = data.split(',')
     swimmers.sort(key=lambda x: ctr[x])     
     return ','.join(swimmers)
