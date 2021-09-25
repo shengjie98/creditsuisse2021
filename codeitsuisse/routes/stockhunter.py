@@ -35,158 +35,215 @@ def handle_testcase(testcase):
     h_step = testcase["horizontalStepper"]
     v_step = testcase["verticalStepper"]
 
-    ROWS = end[0] - start[0] + 1
-    COLS = end[1] - start[1] + 1
+    COLS = end[0] - start[0] + 1
+    ROWS = end[1] - start[1] + 1
 
     # We can find the worst case where we need to extend the matrix to the right and to the bottom. --> extra cols = ROWS, probably extra rows - COLS
-    risk_index_matrix = [[-1] * (COLS + ROWS) for _ in range(ROWS + COLS)]
-    risk_level_matrix = [[-1] * (COLS + ROWS) for _ in range(ROWS + COLS)]
+    risk_index_matrix = [[-1] * (COLS * 2) for _ in range(ROWS * 2)]
+    risk_level_matrix = [[-1] * (COLS * 2) for _ in range(ROWS * 2)]
 
     # Calculate risk index of every cell up till target cell, since depends on left and upper cell.
 
-    risk_index_matrix[start[0]][start[1]] = 0
-    risk_index_matrix[start[0]][start[1]] = 0
+    risk_index_matrix[start[1]][start[0]] = 0
+    risk_index_matrix[end[1]][end[0]] = 0
 
-    risk_level_matrix[start[0]][start[1]] = (0 + grid_depth) % grid_key
-    risk_level_matrix[end[0]][end[1]] = (0 + grid_depth) % grid_key
+    risk_level_matrix[start[1]][start[0]] = (0 + grid_depth) % grid_key
+    risk_level_matrix[end[1]][end[0]] = (0 + grid_depth) % grid_key
 
     # Calc risk of top level
-    for c in range(1, ROWS + COLS):
-        risk_index_matrix[0][c] = c * h_step
-        risk_level_matrix[0][c] = (c * h_step + grid_depth) % grid_key
+    for x in range(1, 2 * COLS):
+        risk_index_matrix[0][x] = x * h_step
+        risk_level_matrix[0][x] = (x * h_step + grid_depth) % grid_key
 
     # Calc risk of left level
-    for r in range(1, ROWS + COLS):
-        risk_index_matrix[r][0] = r * v_step
-        risk_level_matrix[r][0] = (r * v_step + grid_depth) % grid_key
+    for y in range(1, ROWS * 2):
+        risk_index_matrix[y][0] = y * v_step
+        risk_level_matrix[y][0] = (y * v_step + grid_depth) % grid_key
 
     # Calc risk of every other cell
-    for r in range(1, ROWS + COLS):
-        for c in range(1, ROWS + COLS):
-            risk_index = risk_level_matrix[r - 1][c] * risk_level_matrix[r][c - 1]
-            risk_index_matrix[r][c] = risk_index
-            risk_level_matrix[r][c] = (risk_index + grid_depth) % grid_key
+    for y in range(1, ROWS * 2):
+        for c in range(1, 2 * COLS):
+            risk_index = risk_level_matrix[y - 1][x] * risk_level_matrix[y][x - 1]
+            risk_index_matrix[y][x] = risk_index
+            risk_level_matrix[y][x] = (risk_index + grid_depth) % grid_key
 
     grid_map = []
-    for r in range(ROWS + COLS):
+    for y in range(ROWS * 2):
         this_row = []
-        for c in range(ROWS + COLS):
-            risk_level = risk_level_matrix[r][c]
-
+        for x in range(2 * COLS):
+            risk_level = risk_level_matrix[y][x]
             if risk_level % 3 == 0:
                 risk_cost = "L"
             elif risk_level % 3 == 1:
                 risk_cost = "M"
-    results = []
-    keys = "LMS"
-    convert = lambda x: keys[3 - x]
-    for d in data:
-        grid, start, end = make_grid(d)
-        dist, row_lim, col_lim, path = dikstraw(grid, start, end)
-
-        print(path)
-        for r in grid:
-            print(r)
-
-        grid = [list(map(convert, row[: col_lim + 1])) for row in grid[: row_lim + 1]]
-
-        results.append({"gridMap": grid, "minimumCost": dist})
-
-    logging.info("My results :{}".format(results))
-    return json.dumps(results)
-
-
-def make_grid(data: dict):
-    start = data["entryPoint"]["first"], data["entryPoint"]["second"]
-    end = data["targetPoint"]["first"], data["targetPoint"]["second"]
-
-    depth = data["gridDepth"]
-    key = data["gridKey"]
-    h_stepper = data["horizontalStepper"]
-    v_stepper = data["verticalStepper"]
-
-    corner = math.ceil((end[0] + 1) * 2), math.ceil((end[1] + 1) * 2)
-    print(corner)
-
-    grid = [[0] * corner[0] for i in range(corner[1])]
-
-    for row in range(corner[1]):
-        for col in range(corner[0]):
-            if (col, row) == start:
-                index = 0
-            elif row == 0:
-                index = h_stepper * col
-            elif col == 0:
-                index = v_stepper * row
-            else:
+            elif risk_level % 3 == 2:
                 risk_cost = "S"
             this_row.append(risk_cost)
-
-        grid_map.append(this_row)
-
-    min_cost = find_minimum_cost(grid_map, start, end)
-
-    return {"gridMap": grid_map, "minimumCost": min_cost}
-
-
-def find_minimum_cost(grid_map: list, source: tuple, target: tuple):
-    ROWS = len(grid_map)
-    COLS = len(grid_map[0])
-
-    def get_val(coords):
-        risk_cost = grid_map[coords[0]][coords[1]]
-        if risk_cost == "L":
-            return 3
-        elif risk_cost == "M":
-            return 2
-        elif risk_cost == "S":
-            return 1
-        return 0
-
-    minheap = []
-    cost = 0
-    seen = set()
-    dist = {}
-
-    heapq.heappush(minheap, (get_val(source), source))
-    seen.add(source)
-
-    while minheap:
-        # pop from minheap
-        new_cost, coord = heapq.heappop(minheap)
-        cost += new_cost
-        logging.info(f"Coord: {coord[0]},{coord[1]} - cost: {cost}")
-
-        if coord == target:
-            return cost
-
-        # set this coord as seen
-        seen.add(coord)
-
-        # for neighbours, if not already seen, add to heap
-        r, c = coord
-        positions = [
-            (r + 1, c),
-            (r - 1, c),
-            (r, c + 1),
-            (r, c - 1),
-        ]
-        for nr, nc in positions:
-            if nr == -1 or nr == ROWS or nc == -1 or nc == COLS:
+        grid_map.append(this_row)    
+    
+    letter_to_num = {
+        "L": 3, 
+        "M" : 2, 
+        "S": 1
+    }
+    # dijkstra
+    d = defaultdict(lambda: float('inf'))
+    d[start] = 0
+    pq = []
+    prev = defaultdict(lambda: None)
+    heapq.heappush(pq, (d[start], start))
+    while pq:
+        distance, u = heapq.heappop(pq)
+        if u == end:
+            break
+        if distance > d[u]:
+            continue
+        x, y = u
+        next_positions = [
+                (y + 1, x),
+                (y - 1, x),
+                (y, x + 1),
+                (y, x - 1),
+            ]
+        for nr, nc in next_positions:
+            if nr in [-1, ROWS*2] or nc in [-1, COLS*2]:
                 continue
-            if (nr, nc) in seen:
-                continue
+            v = (nc, nr)
+            new_d = distance + letter_to_num[grid_map[nr][nc]]
+            if d[v] > new_d:
+                heapq.heappush(pq, (new_d, v))
+                d[v] = new_d
+                prev[v] = u
+    v = end
+    max_x, max_y = end
+    while prev[v]:
+        x, y = v
+        max_x = max(x, max_x)
+        max_y = max(y, max_y)
+        v = prev[v]
+    
+    # make grid map
+    final_grid = [row[:max_x+1] for row in grid_map[:max_y+1]]
+    output = {
+        "gridMap": final_grid,
+        "minimumCost": d[v]
+    }
+    return output
+        
+        
+        
+#     ## bullshit below    
+    
+#     results = []
+#     keys = "LMS"
+#     convert = lambda x: keys[3 - x]
+#     for d in data:
+#         grid, start, end = make_grid(d)
+#         dist, row_lim, col_lim, path = dikstraw(grid, start, end)
 
-            alt_cost = cost + get_val((nr, nc))
-            if (nr, nc) not in dist:
-                dist[(nr, nc)] = alt_cost
-            else:
-                if dist[(nr, nc)] > alt_cost:
-                    dist[(nr, nc)] = alt_cost
+#         print(path)
+#         for r in grid:
+#             print(r)
 
-            heapq.heappush(minheap, (get_val((nr, nc)), (nr, nc)))
+#         grid = [list(map(convert, row[: col_lim + 1])) for row in grid[: row_lim + 1]]
 
-    return cost
+#         results.append({"gridMap": grid, "minimumCost": dist})
+
+#     logging.info("My results :{}".format(results))
+#     return json.dumps(results)
+
+
+# def make_grid(data: dict):
+#     start = data["entryPoint"]["first"], data["entryPoint"]["second"]
+#     end = data["targetPoint"]["first"], data["targetPoint"]["second"]
+
+#     depth = data["gridDepth"]
+#     key = data["gridKey"]
+#     h_stepper = data["horizontalStepper"]
+#     v_stepper = data["verticalStepper"]
+
+#     corner = math.ceil((end[0] + 1) * 2), math.ceil((end[1] + 1) * 2)
+#     print(corner)
+
+#     grid = [[0] * corner[0] for i in range(corner[1])]
+
+#     for row in range(corner[1]):
+#         for col in range(corner[0]):
+#             if (col, row) == start:
+#                 index = 0
+#             elif row == 0:
+#                 index = h_stepper * col
+#             elif col == 0:
+#                 index = v_stepper * row
+#             else:
+#                 risk_cost = "S"
+#             this_row.append(risk_cost)
+
+#         grid_map.append(this_row)
+
+#     min_cost = find_minimum_cost(grid_map, start, end)
+
+#     return {"gridMap": grid_map, "minimumCost": min_cost}
+
+
+# def find_minimum_cost(grid_map: list, source: tuple, target: tuple):
+#     ROWS = len(grid_map)
+#     COLS = len(grid_map[0])
+
+#     def get_val(coords):
+#         risk_cost = grid_map[coords[0]][coords[1]]
+#         if risk_cost == "L":
+#             return 3
+#         elif risk_cost == "M":
+#             return 2
+#         elif risk_cost == "S":
+#             return 1
+#         return 0
+
+#     minheap = []
+#     cost = 0
+#     seen = set()
+#     dist = {}
+
+#     heapq.heappush(minheap, (get_val(source), source))
+#     seen.add(source)
+
+#     while minheap:
+#         # pop from minheap
+#         new_cost, coord = heapq.heappop(minheap)
+#         cost += new_cost
+#         logging.info(f"Coord: {coord[0]},{coord[1]} - cost: {cost}")
+
+#         if coord == target:
+#             return cost
+
+#         # set this coord as seen
+#         seen.add(coord)
+
+#         # for neighbours, if not already seen, add to heap
+#         r, c = coord
+#         positions = [
+#             (r + 1, c),
+#             (r - 1, c),
+#             (r, c + 1),
+#             (r, c - 1),
+#         ]
+#         for nr, nc in positions:
+#             if nr == -1 or nr == ROWS or nc == -1 or nc == COLS:
+#                 continue
+#             if (nr, nc) in seen:
+#                 continue
+
+#             alt_cost = cost + get_val((nr, nc))
+#             if (nr, nc) not in dist:
+#                 dist[(nr, nc)] = alt_cost
+#             else:
+#                 if dist[(nr, nc)] > alt_cost:
+#                     dist[(nr, nc)] = alt_cost
+
+#             heapq.heappush(minheap, (get_val((nr, nc)), (nr, nc)))
+
+#     return cost
 
 
 # def evaluateStockhunter():

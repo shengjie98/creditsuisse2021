@@ -1,5 +1,6 @@
 import logging
 import json
+from collections import defaultdict
 
 from flask import request, jsonify
 from itertools import product
@@ -13,16 +14,10 @@ logger = logging.getLogger(__name__)
 def perry():
     interviews = request.get_json()
     logging.info("data sent for evaluation {}".format(interviews))
-    # result = interpret_interviews(interviews)
+    result = interpret_interviews(interviews)
 
     # logging.info("My result :{}".format(result))
     return json.dumps(0)
-
-def all_repeat(rno):
-    results = []
-    for c in product([True, False], repeat = rno):
-        results.append(c)
-    return results
 
 def interpret_interviews(interviews: list):
     interview_outputs = []
@@ -30,10 +25,49 @@ def interpret_interviews(interviews: list):
         max_rating = interview["maxRating"]
         questions = interview["questions"]
 
-        sets = []
-        
-
-        output = {p: 1, q: high - low + 1}
-        interview_outputs.append(output)
+        D = initializeDiffArray()
+        for question in questions:
+            update(D, question[0]['from'], question[0]['to'])
+        A = scanArray(D)
+        print(A)
+        # interview_outputs.append(output)
     return interview_outputs
 
+def initializeDiffArray():
+    
+
+    # We use one extra space because
+    # update(l, r, x) updates D[r+1]
+    # D = [0 for i in range(0 , n + 1)]
+
+    # D[0] = A[0]; D[n] = 0
+    # for i in range(1, n ):
+    #     D[i] = A[i] - A[i - 1]
+    return defaultdict(int)
+
+# Does range update
+def update(D, l, r):
+    D[l] += 1
+    D[r + 1] -= 1
+
+# Prints updated Array
+def scanArray(D):
+    A = defaultdict(int)
+    print(D)
+    for i, (key, val) in enumerate(sorted([(k, v) for k, v in D.items()])):
+        if i == 0:
+            A[i] = val
+        else:
+            A[i] = val + A[i-1]
+    for i in range(0 , len(A)):
+        if (i == 0):
+            A[i] = D[i]
+    return A
+    #     # Note that A[0] or D[0] decides
+    #     # values of rest of the elements.
+    #     else:
+    #         A[i] = D[i] + A[i - 1]
+
+    #     print(A[i], end = " ")
+        
+    # print ("")
