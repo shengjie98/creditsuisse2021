@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def evaluateAsteroid():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
-    result = [ast(i) for i in data]
+    result = [ast(i) for i in data.get('test_cases')]
     logging.info("My result :{}".format(result))
     return json.dumps(result)
 
