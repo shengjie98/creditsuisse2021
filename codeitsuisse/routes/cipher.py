@@ -19,7 +19,7 @@ def crack():
     logging.info("data sent for evaluation {}".format(data))
     ans = []
     time_taken = 0
-    for d in data:
+    for d in data[::-1]:
         D = d['D']
         # X = d["X"]
         Y = d["Y"]
@@ -32,7 +32,7 @@ def crack():
 
         logging.info(Y)
         
-    return json.dumps(ans)
+    return json.dumps(ans[::-1])
 
 
 def brute(d, y):
