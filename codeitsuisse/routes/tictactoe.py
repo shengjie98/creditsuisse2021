@@ -19,7 +19,6 @@ def get_id():
     endpoint = url + battleId
 
     stream_response = requests.get(endpoint, stream=True)
-
     client = sseclient.SSEClient(stream_response)
 
     # Loop forever (while connection "open")
@@ -34,7 +33,9 @@ def get_id():
                     "action": 'putSymbol',
                     "position": "NW"
                 }
+                logging.info('Before sending')
                 x = requests.post(endpoint, data = to_post)
+                logging.info('after sending')
                 updateBoard(board, "NW", player)
 
         elif d.get('winner'):
