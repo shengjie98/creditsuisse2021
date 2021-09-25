@@ -60,12 +60,7 @@ def multiplier(length: int):
 
 def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens: list, pos: list, prop: list):
     if start == end:
-        prop[start][end] = True
-        if cleanlens[start] == 2:
-            prop[start][end] = False
-        elif cleanlens[start] == 1:
-            if start == 0 or end == len(cleanlens) - 1 or (cleanstr[start-1] != cleanstr[end+1]):
-                prop[start][end] = False
+        prop[start][end] = cleanlens[start] > 2
         if prop[start][end]:
             dp[start][end] = multiplier(cleanlens[start])
         else:
@@ -77,17 +72,17 @@ def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens
         return dp[start][end], pos[start][end], prop[start][end]
 
     else:
+        take_start = longest_palindrome(cleanstr, start, end-1, dp, cleanlens, pos, prop)
+        take_end = longest_palindrome(cleanstr, start+1, end, dp, cleanlens, pos, prop)
+        
+        # print(f"{start}, {end}: takestart: {take_start}, takeend:{take_end}")
         if cleanstr[start] != cleanstr[end]:
-            take_start = longest_palindrome(cleanstr, start, end-1, dp, cleanlens, pos, prop)
-            take_end = longest_palindrome(cleanstr, start+1, end, dp, cleanlens, pos, prop)
-
             # if start == 0 and end == len(cleanstr)-1:
             #     _start = longest_palindrome(cleanstr, start, start, dp, cleanlens, pos)
             #     _end = longest_palindrome(cleanstr, end, end, dp, cleanlens, pos)
             #     take_start = take_start[0] + _end[0], take_start[1]
             #     take_end = take_end[0] + _start[0], take_end[1]
 
-            # print(f"{start}, {end}: takestart: {take_start}, takeend:{take_end}")
 
             if take_start[0] > take_end[0]:
                 dp[start][end] = take_start[0]
@@ -98,12 +93,23 @@ def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens
             prop[start][end] = False
 
         else:
-            sub = longest_palindrome(cleanstr, start+1, end-1, dp, cleanlens, pos, prop)
-            # print(f"{start}, {end}: {sub}")
-            if sub[2]:
-                dp[start][end] = sub[0] + multiplier(cleanlens[start] + cleanlens[end])
+            take_both = longest_palindrome(cleanstr, start+1, end-1, dp, cleanlens, pos, prop)
+            # take_both = longest_palindrome(cleanstr, start+1, end-1, dp, cleanlens, pos, prop)
+            if take_both[2]:
+                take_both = take_both[0] + multiplier(cleanlens[start] + cleanlens[end]), take_both[1], take_both[2]
+                dp[start][end] = take_both[0]
             else:
-                dp[start][end] = sub[0]
+                dp[start][end] = take_both[0]
+            # print(f"{start}, {end}: {take_both}")
+
+            sub = take_both
+            
+            if take_start[0] > take_both[0]:
+                sub = take_start
+            if take_end[0] > take_both[0]:
+                sub = take_end
+
+            dp[start][end] = sub[0]
             pos[start][end] = sub[1]
             prop[start][end] = sub[2]
 
