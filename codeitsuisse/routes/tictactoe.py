@@ -25,7 +25,6 @@ def get_id():
 
     # Loop forever (while connection "open")
     for i, event in enumerate(client.events()):
-        print(len(client.events()))
         logging.info(event.data)
         d = json.loads(event.data)
         if i == 0:

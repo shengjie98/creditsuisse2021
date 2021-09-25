@@ -30,7 +30,6 @@ def parasite():
         output["p1"], output["p2"] = handleOneAndTwo(grid, interestedIndividuals)
         # output["p2"] = handleTwo(grid)
         output["p3"] = handleThree(grid)
-        print('s')
         output["p4"] = handleFour(grid)
 
         ret.append(output)
@@ -177,7 +176,7 @@ def handleThree(grid):
 
 
 def handleFour(grid):
-    print('here')
+    # print('here')
     grid = deepcopy(grid)
 
     # Check for coords of initial infected person
