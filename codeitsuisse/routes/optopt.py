@@ -38,7 +38,7 @@ def helplah(options, view):
             best = i
 
     shares = [0] * len(options)
-    shares[best] = -100
+    shares[best] = -50
 
     return shares
 
