@@ -28,6 +28,7 @@ def get_id():
         if i == 0:
             board = createBoard()   
             player = d['youAre']
+            endpoint = url + d["id"]
             if player == 'O':
                 to_post = {
                     "action": 'putSymbol',
