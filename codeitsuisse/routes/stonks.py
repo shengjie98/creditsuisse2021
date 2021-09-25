@@ -12,10 +12,10 @@ def stonks():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     ans = []
-    for _ in data:
-        energy = data.get("energy")
-        capital = data.get("capital")
-        timeline = data.get("timeline")
+    for test_case in data:
+        energy = test_case.get("energy")
+        capital = test_case.get("capital")
+        timeline = test_case.get("timeline")
     return json.dumps(0)
 
 
