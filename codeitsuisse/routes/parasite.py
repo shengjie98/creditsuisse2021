@@ -31,7 +31,7 @@ def parasite():
         # output["p2"] = handleTwo(grid)
         output["p3"] = handleThree(grid)
         output["p4"] = handleFour(grid)
-        output['p3'] = -2
+        output['p4'] = -2
 
         ret.append(output)
 
