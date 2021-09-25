@@ -85,7 +85,6 @@ def handleOne(grid, interestedIndividuals):
                 (r, c - 1),
             ]
         for nr, nc in next_positions:
-            print(nr, nc)
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
             if grid[nr][nc] != 1:
@@ -130,7 +129,6 @@ def handleTwo(grid):
                 (r, c - 1),
             ]
         for nr, nc in next_positions:
-            print(nr, nc)
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
             if grid[nr][nc] != 1:
