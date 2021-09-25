@@ -14,7 +14,7 @@ def parasite():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     inputValue = data
-
+    
     ret = []
 
     for room in inputValue:
@@ -33,7 +33,7 @@ def parasite():
         ret.append(output)
 
 
-    return json.dumps({"output": ret})
+    return json.dumps(ret)
 
 def handleOne(grid, interestedIndividuals):
     ''' Takes in grid of individuals and a list of interestedIndividuals, and outputs their final infection status  
