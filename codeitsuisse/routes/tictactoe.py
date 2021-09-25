@@ -67,6 +67,8 @@ def get_id():
                     x = requests.post(play_end, json = to_post)
                     logging.info(x.status_code, to_post)
                     break
+            else:
+                break
                     
 
     # logging.info("My result :{}".format(result))
