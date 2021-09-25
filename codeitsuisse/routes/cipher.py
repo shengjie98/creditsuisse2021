@@ -10,7 +10,7 @@ from hashlib import sha256
 
 logger = logging.getLogger(__name__)
 
-@app.route('/square', methods=['POST'])
+@app.route('/cipher-cracking', methods=['POST'])
 def crack():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
@@ -21,6 +21,4 @@ def crack():
         logging.info(Y)
         
     return json.dumps(0)
-
-
 
