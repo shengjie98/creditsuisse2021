@@ -42,7 +42,7 @@ def ast(seq: str):
     # print(sum(cleanlens))
     # print(res)
 
-    origin = sum(cleanlens[:res[1]]) + cleanlens[res[1]] // 2 - (cleanlens[res[1]]%2 == 0)
+    origin = sum(cleanlens[:res[1]]) + cleanlens[res[1]] // 2
 
     res = {
         "input": seq,
@@ -61,7 +61,7 @@ def multiplier(length: int):
 def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens: list, pos: list, prop: list):
     if start == end:
         prop[start][end] = cleanlens[start] > 2
-        if prop:
+        if prop[start][end]:
             dp[start][end] = multiplier(cleanlens[start])
         else:
             dp[start][end] = 0
