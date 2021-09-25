@@ -6,5 +6,6 @@ import codeitsuisse.routes.asteroid
 import codeitsuisse.routes.parasite
 import codeitsuisse.routes.tictactoe
 import codeitsuisse.routes.stonks
+import codeitsuisse.routes.stockhunter
 import codeitsuisse.routes.quoridor
 
