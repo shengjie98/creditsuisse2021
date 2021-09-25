@@ -31,7 +31,7 @@ def optopt():
 #             o['expectation'] = expected_market_val
 
 
-def rngsus(options, views):
+def rngsus(options, view):
     rng = [random() for i in range(len(options))]
     total = sum(rng)
     for i in range(len(rng)):
