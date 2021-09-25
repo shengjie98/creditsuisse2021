@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from flask import request, jsonify
 from itertools import product
+from math import gcd
 
 from codeitsuisse import app
 
@@ -14,10 +15,26 @@ logger = logging.getLogger(__name__)
 def perry():
     interviews = request.get_json()
     logging.info("data sent for evaluation {}".format(interviews))
-    result = interpret_interviews(interviews)
+    # result = interpret_interviews(interviews)
+    result = dumb(interviews)
 
-    # logging.info("My result :{}".format(result))
-    return json.dumps(0)
+    logging.info("My result :{}".format(result))
+    return json.dumps(result)
+
+def dumb(data):
+    ans = []
+    for test_case in data:
+        p = 0
+        for q in test_case['questions']:
+            p += q[0]["to"] - q[0]["from"]
+
+        q = test_case["maxRating"]
+        hcf = gcd(p, q)
+
+        ans.append({"p": p//hcf, "q": q//hcf})
+
+    return ans
+
 
 def interpret_interviews(interviews: list):
     interview_outputs = []
