@@ -87,7 +87,9 @@ def handleOne(grid, interestedIndividuals):
             ]
         for nr, nc in next_positions:
             print(nr, nc)
-            if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen or grid[nr][nc] != 1:
+            if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
+                continue
+            if grid[nr][nc] != 1:
                 continue
             seen.add((nr, nc))
             queue.append((nr, nc))
