@@ -47,7 +47,7 @@ def get_id():
                 continue
             elif d.get('action') == 'putSymbol':
                 position = d['position']
-                if validMove(board, position):
+                if position and  validMove(board, position):
                     updateBoard(board, position, d['player'])
                     move = computeMove(board, player)
                     if move:
@@ -181,7 +181,7 @@ def minimax(board, maxSymbol, minSymbol, depth, isMaximizing):
     available = [position for position, value in board.items() if value == " "]
     
     # Go through all available positions
-    symbol = minSymbol if isMaximizing else maxSymbol
+    symbol = maxSymbol if isMaximizing else minSymbol
     for position in available:
         board[position] = symbol
         score = minimax(board, maxSymbol, minSymbol, depth, not isMaximizing)
