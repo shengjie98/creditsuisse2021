@@ -19,26 +19,49 @@ def crack():
     logging.info("data sent for evaluation {}".format(data))
     ans = []
     time_taken = 0
-    for d in data[::-1]:
-        D = d['D']
-        # X = d["X"]
-        Y = d["Y"]
-        if D <= 3 and time_taken <= 28:
-            k, t = brute(D, Y)
-            ans.append(k)
-            time_taken += t
+    fs = []
+    ds = []
+    currd = 1
+    for i in range(len(data)):
+        d = data[i]
+        if d['D'] == currd:
+            ds.append((d['X'], i))
         else:
-            ans.append(1)
+            fs.append(sorted(ds))
+            ds = []
 
-        logging.info(Y)
+    ans = [1] * len(data)
+
+    for D, ds in enumerate(fs):
+        if D > 2:
+            continue
+        
+        f_floor = 0
+        for d in ds:
+            k, f_floor, t = brute(D+1, data[d[1]]['Y'], f_floor)
+            ans[d[1]] = k
+
+
+    # for d in data[::-1]:
+    #     D = d['D']
+    #     # X = d["X"]
+    #     Y = d["Y"]
+    #     if D <= 3 and time_taken <= 28:
+    #         k, t, f_floor = brute(D, Y, f_floor)
+    #         ans.append(k)
+    #         time_taken += t
+    #     else:
+    #         ans.append(1)
+
+        # logging.info(Y)
         
     return json.dumps(ans[::-1])
 
 
-def brute(d, y):
+def brute(d, y, f_floor):
     start = time()
     for k in range(10**d):
         for f in range(100000):
             if sha256(f"{k}::{f/1000}".encode()).hexdigest() == y:
-                return k, time() - start
-    return randint(1, 10**d), time() - start
+                return k, f, time() - start
+    return randint(1, 10**d), f_floor, time() - start
