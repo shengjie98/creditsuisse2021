@@ -67,8 +67,8 @@ def decode():
     possible_results = get_possible_results(num_slots)
     
     if not history:
-        guess = [possible_values[0]] * (num_slots // 2) + [possible_values[1]] * (num_slots - num_slots // 2)
-        return json.dumps(guess)
+        best_guess = [possible_values[0]] * (num_slots // 2) + [possible_values[1]] * (num_slots - num_slots // 2)
+        # return json.dumps(guess)
     else:
         possible = []
         for s in all_repeat(possible_values, num_slots):
@@ -90,5 +90,9 @@ def decode():
             if score > max_score:
                 max_score = score
                 best_guess = next_guess
-
-        json.dumps(best_guess)
+    response = app.response_class(
+        response=json.dumps(best_guess),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
