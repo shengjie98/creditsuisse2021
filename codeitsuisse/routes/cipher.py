@@ -28,9 +28,11 @@ def crack():
 
     for k in range(1, 10**3):
         for f in range(1, 100000):
-            ind = hashes.get(sha256(f"{k}::{f/1000}".encode()).hexdigest())
-            if ind is not None:
+            try:
+                ind = hashes.get(sha256(f"{k}::{f/1000}".encode()).hexdigest())
                 ans[ind] = k
+            except:
+                continue
         
     return json.dumps(ans[::-1])
 
