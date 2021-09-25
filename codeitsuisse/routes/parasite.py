@@ -3,10 +3,9 @@ import json
 from flask import request, jsonify
 
 from codeitsuisse import app
-
 from copy import deepcopy
-
 from collections import deque
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -71,45 +70,62 @@ def handleOne(grid, interestedIndividuals):
             break
 
     # Simulate infection
-
-    seen = {}
-
     # Do bfs infection
     queue = deque([initial_infected])
-    seen = {}
+    seen = {initial_infected}
+    depth = defaultdict(lambda: -1)
+    depth[initial_infected] = 0
     current_tick = -1
     while queue:
-        current_tick += 1
-        current_length = len(queue)
-
-        for _ in range(current_length):
-            r, c = queue.popleft()
-
-            if grid[r][c] == 0 or grid[r][c] == 2:
-                seen[(r, c)] = -1
-            else:
-                seen[(r, c)] = current_tick
-
-            # grid[r][c] = 3
-            # Infect and add neighbors to queue
-            next_positions = [
+        r, c = queue.popleft()
+        d = depth[(r, c)]
+        next_positions = [
                 (r + 1, c),
                 (r - 1, c),
                 (r, c + 1),
                 (r, c - 1),
             ]
+        for nr, nc in next_positions:
+            if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen or grid[nr][nc] != 1:
+                pass
+            queue.append((nr, nc))
+            depth[(nr, nc)] = d + 1
+    for s in interestedIndividuals:
+        x, y = map(int, s.split(','))
+        ret[s] = depth[(x, y)]
+    
+    
+        # current_tick += 1
+        # current_length = len(queue)
 
-            for pos in next_positions:
-                nr, nc = pos
+        # for _ in range(current_length):
+        #     r, c = queue.popleft()
 
-                if nr == -1 or nr == ROWS or nc == -1 or nc == COLS:
-                    continue
-                if (nr, nc) in seen:
-                    continue
+        #     if grid[r][c] == 0 or grid[r][c] == 2:
+        #         seen[(r, c)] = -1
+        #     else:
+        #         seen[(r, c)] = current_tick
 
-                queue.append(pos)
+        #     # grid[r][c] = 3
+        #     # Infect and add neighbors to queue
+        #     next_positions = [
+        #         (r + 1, c),
+        #         (r - 1, c),
+        #         (r, c + 1),
+        #         (r, c - 1),
+        #     ]
 
-        logging.info(seen)
+        #     for pos in next_positions:
+        #         nr, nc = pos
+
+        #         if nr == -1 or nr == ROWS or nc == -1 or nc == COLS:
+        #             continue
+        #         if (nr, nc) in seen:
+        #             continue
+
+        #         queue.append(pos)
+
+        # logging.info(seen)
 
     # def infect_dfs(r, c, tick):
     #     # logging.info(f"r: {r}, c: {c}, tick: {tick}")
@@ -137,18 +153,18 @@ def handleOne(grid, interestedIndividuals):
 
     # infect_dfs(*initial_infected, 0)
 
-    for ind in interestedIndividuals:
-        # Check if ind is already initially infected
+    # for ind in interestedIndividuals:
+    #     # Check if ind is already initially infected
 
-        ind_pos = tuple(map(int, ind.split(",")))
-        if ind_pos == initial_infected:
-            ret[ind] = -1
-            continue
+    #     ind_pos = tuple(map(int, ind.split(",")))
+    #     if ind_pos == initial_infected:
+    #         ret[ind] = -1
+    #         continue
 
-        if ind_pos in seen:
-            ret[ind] = seen[(ind_pos[0], ind_pos[1])]
-        else:
-            ret[ind] = -1
+    #     if ind_pos in seen:
+    #         ret[ind] = seen[(ind_pos[0], ind_pos[1])]
+    #     else:
+    #         ret[ind] = -1
 
     return ret
 
