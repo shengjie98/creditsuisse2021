@@ -30,7 +30,6 @@ def parasite():
         output["p1"], output["p2"] = handleOneAndTwo(grid, interestedIndividuals)
         # output["p2"] = handleTwo(grid)
         output["p3"] = handleThree(grid)
-        print('s')
         output["p4"] = handleFour(grid)
 
         ret.append(output)
@@ -39,24 +38,6 @@ def parasite():
 
 
 def handleOneAndTwo(grid, interestedIndividuals):
-    """ Takes in grid of individuals and a list of interestedIndividuals, and outputs their final infection status  
-    Parasite A can travel both horizontally and vertically. Calculate the time taken to infect a healthy person. Return -1 if person remains healthy or if the person is infected to begin with.
-    """
-
-    """
-    "grid": [
-      [0, 3, 2],
-      [0, 1, 1],
-      [1, 0, 0]
-    ],
-    "interestedIndividuals": [
-      "0,2", "2,0", "1,2"
-    ]
-
-
-    "p1": { "0,2":  -1, "2,0":  -1, "1,2":  2},
-
-    """
     grid = deepcopy(grid)
     ret = {}
 
@@ -89,7 +70,7 @@ def handleOneAndTwo(grid, interestedIndividuals):
         for nr, nc in next_positions:
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
-            if grid[nr][nc] in [1, 3]:
+            if grid[nr][nc] in [1,2, 3]:
                 seen.add((nr, nc))
                 queue.append((nr, nc))
                 depth[(nr, nc)] = d + 1
@@ -109,24 +90,6 @@ def handleOneAndTwo(grid, interestedIndividuals):
     return ret, high 
 
 def handleThree(grid):
-    """ Takes in grid of individuals and a list of interestedIndividuals, and outputs their final infection status  
-    Parasite A can travel both horizontally and vertically. Calculate the time taken to infect a healthy person. Return -1 if person remains healthy or if the person is infected to begin with.
-    """
-
-    """
-    "grid": [
-      [0, 3, 2],
-      [0, 1, 1],
-      [1, 0, 0]
-    ],
-    "interestedIndividuals": [
-      "0,2", "2,0", "1,2"
-    ]
-
-
-    "p1": { "0,2":  -1, "2,0":  -1, "1,2":  2},
-
-    """
     grid = deepcopy(grid)
     ret = {}
 
@@ -163,7 +126,7 @@ def handleThree(grid):
         for nr, nc in next_positions:
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
-            if grid[nr][nc] in [1, 3]:
+            if grid[nr][nc] in [1, 2, 3]:
                 seen.add((nr, nc))
                 queue.append((nr, nc))
                 depth[(nr, nc)] = d + 1
@@ -177,7 +140,7 @@ def handleThree(grid):
 
 
 def handleFour(grid):
-    print('here')
+    # print('here')
     grid = deepcopy(grid)
 
     # Check for coords of initial infected person
