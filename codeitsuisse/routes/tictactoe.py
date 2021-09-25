@@ -25,7 +25,7 @@ def get_id():
     # Loop forever (while connection "open")
     for i, event in enumerate(client.events()):
         logging.info(event.data)
-        d = json.load(event.data)
+        d = json.loads(event.data)
         if i == 0:
             board = createBoard()   
             player = d['youAre']
