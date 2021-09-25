@@ -87,10 +87,11 @@ def handleOneAndTwo(grid, interestedIndividuals):
         for nr, nc in next_positions:
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
-            if grid[nr][nc] in [1, 2]:
+            if grid[nr][nc] in [1, 2, 3]:
                 seen.add((nr, nc))
                 queue.append((nr, nc))
                 depth[(nr, nc)] = d + 1
+
     for s in interestedIndividuals:
         x, y = map(int, s.split(','))
         if (x, y) in health:
