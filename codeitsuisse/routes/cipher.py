@@ -23,7 +23,7 @@ def crack():
         D = d['D']
         # X = d["X"]
         Y = d["Y"]
-        if D <= 4 and time_taken <= 28:
+        if D <= 3 and time_taken <= 28:
             k, t = brute(D, Y)
             ans.append(k)
             time_taken += t
