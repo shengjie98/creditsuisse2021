@@ -10,6 +10,7 @@ from codeitsuisse import app
 logger = logging.getLogger(__name__)
 
 url = "https://cis2021-arena.herokuapp.com/tic-tac-toe/start/"
+play_url = "https://cis2021-arena.herokuapp.com/tic-tac-toe/play/"
 
 @app.route('/tic-tac-toe', methods=['POST'])
 def get_id():
@@ -17,6 +18,7 @@ def get_id():
     logging.info("data sent for evaluation {}".format(data))
     battleId = data['battleId']
     endpoint = url + battleId
+    play_end = play_url + battleId
 
     stream_response = requests.get(endpoint, stream=True)
     client = sseclient.SSEClient(stream_response)
@@ -28,14 +30,13 @@ def get_id():
         if i == 0:
             board = createBoard()   
             player = d['youAre']
-            endpoint = url + d["id"]
             if player == 'O':
                 to_post = {
                     "action": 'putSymbol',
                     "position": "NW"
                 }
                 logging.info('Before sending')
-                x = requests.post(endpoint, json = to_post)
+                x = requests.post(play_end, json = to_post)
                 logging.info(x.status_code)
                 logging.info('after sending')
                 updateBoard(board, "NW", player)
@@ -57,13 +58,13 @@ def get_id():
                         "action": 'putSymbol',
                         "position": move
                     }
-                    x = requests.post(endpoint, json = to_post)
+                    x = requests.post(play_end, json = to_post)
                 else:
                     # TODO flip table
                     to_post = {
                         "action": "(╯°□°)╯︵ ┻━┻"
                     }
-                    x = requests.post(endpoint, json = to_post)
+                    x = requests.post(play_end, json = to_post)
 
     # logging.info("My result :{}".format(result))
     return json.dumps(0)
