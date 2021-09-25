@@ -42,7 +42,7 @@ def ast(seq: str):
     # print(sum(cleanlens))
     # print(res)
 
-    origin = sum(cleanlens[:res[1]]) + 1 #cleanlens[res[1]] // 2
+    origin = sum(cleanlens[:res[1]]) + cleanlens[res[1]] // 2 - (cleanlens[res[1]]%2 == 0)
 
     res = {
         "input": seq,
