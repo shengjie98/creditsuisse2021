@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @app.route("/stig/perry", methods=["POST"])
 def perry():
     interviews = request.get_json()
-    logging.info("data sent for evaluation {}".format(interviews))
+    # logging.info("data sent for evaluation {}".format(interviews))
     # result = interpret_interviews(interviews)
     result = dumb(interviews)
 
@@ -28,6 +28,7 @@ def perry():
 def dumb(data):
     ans = []
     for test_case in data:
+        logging.info(len(test_case['questions']))
         p = 0
         for q in test_case['questions']:
             p += q[0]["to"] - q[0]["from"]
