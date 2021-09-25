@@ -17,7 +17,7 @@ def evaluateAsteroid():
     result = []
     for test_case in data.get("test_cases"):
         score, origin = ast(test_case)
-        test_case_ans = {"input": test_case, "score": score, "origin:": origin}
+        test_case_ans = {"input": test_case, "score": score, "origin": origin}
         result.append(test_case_ans)
 
     logging.info("My result :{}".format(result))
