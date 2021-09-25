@@ -17,43 +17,19 @@ logger = logging.getLogger(__name__)
 def crack():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
-    ans = []
-    time_taken = 0
-    fs = []
-    ds = []
-    currd = 1
-    for i in range(len(data)):
-        d = data[i]
-        if d['D'] == currd:
-            ds.append((d['X'], i))
-        else:
-            fs.append(sorted(ds))
-            ds = []
-
     ans = [1] * len(data)
+    fs = []
+    hashes = {}
 
-    for D, ds in enumerate(fs):
-        if D > 2:
-            continue
-        
-        f_floor = 0
-        for d in ds:
-            k, f_floor, t = brute(D+1, data[d[1]]['Y'], f_floor)
-            ans[d[1]] = k
+    for i, d in enumerate(data):
+        if d['D'] < 5:
+            hashes[d['Y']] = i
 
-
-    # for d in data[::-1]:
-    #     D = d['D']
-    #     # X = d["X"]
-    #     Y = d["Y"]
-    #     if D <= 3 and time_taken <= 28:
-    #         k, t, f_floor = brute(D, Y, f_floor)
-    #         ans.append(k)
-    #         time_taken += t
-    #     else:
-    #         ans.append(1)
-
-        # logging.info(Y)
+    for k in range(1, 10**4):
+        for f in range(1, 100000):
+            ind = hashes.get(sha256(f"{k}::{f/1000}".encode()).hexdigest())
+            if ind is not None:
+                ans[ind] = k
         
     return json.dumps(ans[::-1])
 
