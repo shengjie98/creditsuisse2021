@@ -65,6 +65,7 @@ def stonks():
             seq.extend([f'b-{start_company}-{max_buy}', f'j-2037-{start}', f's-{start_company}-{max_buy}'])
             profit = max_buy * timeline[start][start_company]["price"]
             capital = capital + profit - cost
+            # print(capital, cost, profit)
         else:
             seq.append(f'j-2037-{start}')
         
@@ -74,12 +75,13 @@ def stonks():
         # forward
         energy -= to_travel
         max_buy = min(capital // timeline[start][best_company]["price"], timeline[start][best_company]["qty"]) 
-        timeline[start][best_company]["price"] -= max_buy
+        timeline[start][best_company]["qty"] -= max_buy
         cost = max_buy * timeline[start][best_company]["price"]
+        # print(timeline[start][best_company]["price"])
         profit = max_buy * timeline[end][best_company]["price"]
         capital = capital + profit - cost
         seq.extend([f'b-{best_company}-{max_buy}', f'j-{start}-{end}', f's-{best_company}-{max_buy}'])
-
+        # print(capital, profit, cost)
         if energy >= (2*to_travel):
             # find best end to start
             # repeat that shitttt
@@ -92,12 +94,11 @@ def stonks():
                     back_company = company
                     max_back = buy
             while energy >= (2*to_travel):
-                # break
                 # back
                 if max_back > 0:
                     energy -= to_travel
                     max_buy = min(capital // timeline[end][back_company]["price"], timeline[end][back_company]["qty"]) 
-                    timeline[end][back_company]["price"] -= max_buy
+                    timeline[end][back_company]["qty"] -= max_buy
                     cost = max_buy * timeline[end][back_company]["price"]
                     profit = max_buy * timeline[start][back_company]["price"]
                     capital = capital + profit - cost
@@ -109,7 +110,7 @@ def stonks():
                 # forward again
                 energy -= to_travel
                 max_buy = min(capital // timeline[start][best_company]["price"], timeline[start][best_company]["qty"]) 
-                timeline[start][best_company]["price"] -= max_buy
+                timeline[start][best_company]["qty"] -= max_buy
                 cost = max_buy * timeline[start][best_company]["price"]
                 profit = max_buy * timeline[end][best_company]["price"]
                 capital = capital + profit - cost
