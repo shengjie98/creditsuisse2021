@@ -92,11 +92,10 @@ def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens
             if take_start[0] > take_end[0]:
                 dp[start][end] = take_start[0]
                 pos[start][end] = take_start[1]
-                prop[start][end] = take_start[2]
             else:
                 dp[start][end] = take_end[0]
                 pos[start][end] = take_end[1]
-                prop[start][end] = take_end[2]
+            prop[start][end] = False
 
         else:
             sub = longest_palindrome(cleanstr, start+1, end-1, dp, cleanlens, pos, prop)
