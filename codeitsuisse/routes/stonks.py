@@ -8,7 +8,7 @@ from codeitsuisse import app
 logger = logging.getLogger(__name__)
 
 @app.route('/stonks', methods=['POST'])
-def get_id():
+def stonks():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     ans = []
