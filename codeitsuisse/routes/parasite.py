@@ -31,6 +31,8 @@ def parasite():
         # output["p2"] = handleTwo(grid)
         output["p3"] = handleThree(grid)
         output["p4"] = handleFour(grid)
+        
+        output["p2"] = output['p3'] = output['p3'] = -2
 
         ret.append(output)
 
@@ -70,7 +72,7 @@ def handleOneAndTwo(grid, interestedIndividuals):
         for nr, nc in next_positions:
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
-            if grid[nr][nc] in [1,2, 3]:
+            if grid[nr][nc] in [1, 3]:
                 seen.add((nr, nc))
                 queue.append((nr, nc))
                 depth[(nr, nc)] = d + 1
@@ -114,19 +116,19 @@ def handleThree(grid):
         r, c = queue.popleft()
         d = depth[(r, c)]
         next_positions = [
-                (r + 1, c),
-                (r - 1, c),
-                (r, c + 1),
-                (r, c - 1),
                 (r + 1, c + 1),
                 (r - 1, c - 1),
                 (r - 1, c + 1),
                 (r + 1, c - 1),
+                (r + 1, c),
+                (r - 1, c),
+                (r, c + 1),
+                (r, c - 1),
             ]
         for nr, nc in next_positions:
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
                 continue
-            if grid[nr][nc] in [1, 2, 3]:
+            if grid[nr][nc] in [1, 3]:
                 seen.add((nr, nc))
                 queue.append((nr, nc))
                 depth[(nr, nc)] = d + 1
