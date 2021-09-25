@@ -25,9 +25,9 @@ def get_id():
     # Loop forever (while connection "open")
     for i, event in enumerate(client.events()):
         logging.info(event.data)
+        d = json.load(event.data)
         if i == 0:
             board = createBoard()   
-            d = event.data
             player = d['youAre']
             if player == 'O':
                 to_post = {
@@ -37,10 +37,9 @@ def get_id():
                 x = requests.post(endpoint, data = to_post)
                 updateBoard(board, "NW", player)
 
-        elif event.data.get('winner'):
+        elif d.get('winner'):
             break
         else:
-            d = event.data
             if d['player'] == player:
                 # means we just made a move
                 continue
