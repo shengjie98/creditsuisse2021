@@ -2,6 +2,8 @@ import logging
 import socket
 from codeitsuisse import app
 logger = logging.getLogger(__name__)
+import sys
+sys.setrecursionlimit(99999999)
 
 @app.route('/', methods=['GET'])
 def default_route():
