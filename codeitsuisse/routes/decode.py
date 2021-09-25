@@ -90,10 +90,13 @@ def decode():
             if score > max_score:
                 max_score = score
                 best_guess = next_guess
+    ans = {
+        "answer": best_guess
+    }
     response = app.response_class(
-        response=json.dumps(best_guess),
+        response=json.dumps(ans),
         status=200,
         mimetype='application/json'
     )
-    logging.info(json.dumps(best_guess))
+    logging.info(json.dumps(ans))
     return response
