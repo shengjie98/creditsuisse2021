@@ -7,4 +7,4 @@ import codeitsuisse.routes.parasite
 import codeitsuisse.routes.tictactoe
 import codeitsuisse.routes.stonks
 import codeitsuisse.routes.quoridor
-
+import codeitsuisse.routes.cipher
