@@ -2,6 +2,7 @@ import logging
 import json
 from hashlib import sha256
 from time import time
+from random import randint
 
 from flask import request, jsonify
 
@@ -40,4 +41,4 @@ def brute(d, y):
         for f in range(100000):
             if sha256(f"{k}::{f/1000}".encode()).hexdigest() == y:
                 return k, time() - start
-    return 1, time() - start
+    return randint(1, 10**d), time() - start
