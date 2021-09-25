@@ -60,7 +60,12 @@ def multiplier(length: int):
 
 def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens: list, pos: list, prop: list):
     if start == end:
-        prop[start][end] = cleanlens[start] > 2
+        prop[start][end] = True
+        if cleanlens[start] == 2:
+            prop[start][end] = False
+        elif cleanlens[start] == 1:
+            if start == 0 or end == len(cleanlens) - 1 or (cleanstr[start-1] != cleanstr[end+1]):
+                prop[start][end] = False
         if prop[start][end]:
             dp[start][end] = multiplier(cleanlens[start])
         else:
