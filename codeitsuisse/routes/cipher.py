@@ -18,14 +18,15 @@ def crack():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     ans = [1] * len(data)
-    fs = []
     hashes = {}
 
     for i, d in enumerate(data):
-        if d['D'] < 5:
+        if d['D'] < 4:
             hashes[d['Y']] = i
+        else:
+            break
 
-    for k in range(1, 10**4):
+    for k in range(1, 10**3):
         for f in range(1, 100000):
             ind = hashes.get(sha256(f"{k}::{f/1000}".encode()).hexdigest())
             if ind is not None:
