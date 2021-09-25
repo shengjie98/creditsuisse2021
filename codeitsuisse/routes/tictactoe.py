@@ -48,9 +48,9 @@ def get_id():
                 # means we just made a move
                 continue
             elif d.get('action') == 'putSymbol':
-                action = d['action']
-                if validMove(board, action):
-                    updateBoard(board, action, d['player'])
+                position = d['position']
+                if validMove(board, position):
+                    updateBoard(board, position, d['player'])
                     move = computeMove(board, player)
                     updateBoard(board, move, player)
                     # TODO send post to make move
