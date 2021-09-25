@@ -50,14 +50,15 @@ def get_id():
                 if validMove(board, position):
                     updateBoard(board, position, d['player'])
                     move = computeMove(board, player)
-                    updateBoard(board, move, player)
-                    # TODO send post to make move
-                    to_post = {
-                        "action": 'putSymbol',
-                        "position": move
-                    }
-                    x = requests.post(play_end, json=to_post)
-                    logging.info(x.status_code, to_post)
+                    if move:
+                        updateBoard(board, move, player)
+                        # TODO send post to make move
+                        to_post = {
+                            "action": 'putSymbol',
+                            "position": move
+                        }
+                        x = requests.post(play_end, json=to_post)
+                        logging.info(x.status_code, to_post)
                 else:
                     # TODO flip table
                     to_post = {
@@ -178,7 +179,7 @@ def minimax(board, maxSymbol, minSymbol, depth, isMaximizing):
     available = [position for position, value in board.items() if value == " "]
     
     # Go through all available positions
-    symbol = 'O' if isMaximizing else 'X'
+    symbol = maxSymbol if isMaximizing else minSymbol
     for position in available:
         board[position] = symbol
         score = minimax(board, maxSymbol, minSymbol, depth, not isMaximizing)
