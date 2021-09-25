@@ -51,7 +51,7 @@ def stonks():
         max_start = 0
         start_company = None
         if "2037" in timeline.keys():
-            companies = set(timeline["2037"].keys()).union(set(timeline[start].keys()))
+            companies = set(timeline["2037"].keys()).intersection(set(timeline[start].keys()))
             for company in companies:
                 buy = timeline[start][company]["price"] - timeline["2037"][company]["price"]
                 if buy > max_start:
@@ -85,7 +85,7 @@ def stonks():
             # repeat that shitttt
             max_back = 0
             back_company = None
-            companies = set(timeline[end].keys()).union(set(timeline[start].keys()))
+            companies = set(timeline[end].keys()).intersection(set(timeline[start].keys()))
             for company in companies:
                 buy = timeline[start][company]["price"] - timeline[end][company]["price"]
                 if buy > max_back:
@@ -119,7 +119,7 @@ def stonks():
         max_end = 0
         end_company = None
         if "2037" in timeline.keys():
-            companies = set(timeline["2037"].keys()).union(set(timeline[end].keys()))
+            companies = set(timeline["2037"].keys()).intersection(set(timeline[end].keys()))
             for company in companies:
                 buy = timeline['2037'][company]["price"] - timeline[end][company]["price"]
                 if buy > max_end:
