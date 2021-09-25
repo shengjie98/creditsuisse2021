@@ -12,7 +12,14 @@ logger = logging.getLogger(__name__)
 def evaluateAsteroid():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
-    result = [ast(i) for i in data.get("test_cases")]
+    # result = [ast(i) for i in data.get("test_cases")]
+
+    result = []
+    for test_case in data.get("test_cases"):
+        score, origin = ast(test_case)
+        test_case_ans = {"input": test_case, "score": score, "origin:": origin}
+        result.append(test_case_ans)
+
     logging.info("My result :{}".format(result))
     return json.dumps(result)
 
@@ -77,12 +84,15 @@ def ast(s: str):
         return score
 
     max_score = 0
+    best_origin = 0
     for i in range(len(s)):
         new_score = get_score(i, s)
         logger.info(f"Origin: {i} Score: {new_score}")
-        max_score = max(max_score, new_score)
+        if new_score > max_score:
+            max_score = new_score
+            best_origin = i
 
-    return max_score
+    return max_score, best_origin
 
 
 def ast_bad(s: str):
