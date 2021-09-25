@@ -28,6 +28,7 @@ def get_quo():
     }
     x = requests.post(play_end, json = to_post)
     logging.info(x.status_code, to_post)
+    return json.dumps(0)
     # Loop forever (while connection "open")
     # for i, event in enumerate(client.events()):
     #     logging.info(event.data)
