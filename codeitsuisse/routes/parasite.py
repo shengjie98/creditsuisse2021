@@ -9,12 +9,12 @@ from copy import deepcopy
 logger = logging.getLogger(__name__)
 
 
-@app.route('/parasite', methods=['POST'])
+@app.route("/parasite", methods=["POST"])
 def parasite():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     inputValue = data
-    
+
     ret = []
 
     for room in inputValue:
@@ -32,15 +32,15 @@ def parasite():
 
         ret.append(output)
 
-
     return json.dumps(ret)
 
-def handleOne(grid, interestedIndividuals):
-    ''' Takes in grid of individuals and a list of interestedIndividuals, and outputs their final infection status  
-    Parasite A can travel both horizontally and vertically. Calculate the time taken to infect a healthy person. Return -1 if person remains healthy or if the person is infected to begin with.
-    '''
 
-    '''
+def handleOne(grid, interestedIndividuals):
+    """ Takes in grid of individuals and a list of interestedIndividuals, and outputs their final infection status  
+    Parasite A can travel both horizontally and vertically. Calculate the time taken to infect a healthy person. Return -1 if person remains healthy or if the person is infected to begin with.
+    """
+
+    """
     "grid": [
       [0, 3, 2],
       [0, 1, 1],
@@ -53,12 +53,12 @@ def handleOne(grid, interestedIndividuals):
 
     "p1": { "0,2":  -1, "2,0":  -1, "1,2":  2},
 
-    '''
+    """
     grid = deepcopy(grid)
     ret = {}
 
     # Check for coords of initial infected person
-    initial_infected = (-1,-1)
+    initial_infected = (-1, -1)
     ROWS, COLS = len(grid), len(grid[0])
     for r in range(ROWS):
         for c in range(COLS):
@@ -67,36 +67,35 @@ def handleOne(grid, interestedIndividuals):
                 break
         if initial_infected[0] != -1:
             break
-    
+
     # Simulate infection
-    
+
     seen = {}
+
     def infect_dfs(r, c, tick):
         # logging.info(f"r: {r}, c: {c}, tick: {tick}")
 
         if r == -1 or r == ROWS or c == -1 or c == COLS:
             # logging.info("Return due to OOB")
             return
-        if (r,c) in seen:
-            # logging.info("Return due to in seen")
+        if (r, c) in seen:
+            seen[(r, c)] = min(seen.get(r, c), tick)
             return
         if grid[r][c] == 2 or grid[r][c] == 0:
-            seen[(r,c)] = -1
+            seen[(r, c)] = -1
             # logging.info("Return due to not healthy")
             return
 
-
         grid[r][c] = 3
-        seen[(r,c)] = tick
+        seen[(r, c)] = tick
         # logging.info("Infected a new person!")
-        
 
-        infect_dfs(r+1, c, tick+1)
-        infect_dfs(r-1, c, tick+1)
-        infect_dfs(r, c+1, tick+1)
-        infect_dfs(r, c-1, tick+1)
+        infect_dfs(r + 1, c, tick + 1)
+        infect_dfs(r - 1, c, tick + 1)
+        infect_dfs(r, c + 1, tick + 1)
+        infect_dfs(r, c - 1, tick + 1)
 
-    infect_dfs(*initial_infected, 0) 
+    infect_dfs(*initial_infected, 0)
 
     for ind in interestedIndividuals:
         # Check if ind is already initially infected
@@ -108,13 +107,14 @@ def handleOne(grid, interestedIndividuals):
 
     return ret
 
+
 def handleTwo(grid):
-    ''' Returns how many ticks needed to infect whole room with horizontal and vertical spreading. '''
+    """ Returns how many ticks needed to infect whole room with horizontal and vertical spreading. """
     grid = deepcopy(grid)
     ret = {}
 
     # Check for coords of initial infected person
-    initial_infected = (-1,-1)
+    initial_infected = (-1, -1)
     ROWS, COLS = len(grid), len(grid[0])
     for r in range(ROWS):
         for c in range(COLS):
@@ -123,35 +123,34 @@ def handleTwo(grid):
                 break
         if initial_infected[0] != -1:
             break
-    
-    # Simulate infection    
+
+    # Simulate infection
     seen = {}
+
     def infect_dfs(r, c, tick):
         # logging.info(f"r: {r}, c: {c}, tick: {tick}")
 
         if r == -1 or r == ROWS or c == -1 or c == COLS:
             # logging.info("Return due to OOB")
             return
-        if (r,c) in seen:
-            # logging.info("Return due to in seen")
+        if (r, c) in seen:
+            seen[(r, c)] = min(seen.get(r, c), tick)
             return
         if grid[r][c] == 2 or grid[r][c] == 0:
-            seen[(r,c)] = -1
+            seen[(r, c)] = -1
             # logging.info("Return due to not healthy")
             return
 
-
         grid[r][c] = 3
-        seen[(r,c)] = tick
+        seen[(r, c)] = tick
         # logging.info("Infected a new person!")
-        
 
-        infect_dfs(r+1, c, tick+1)
-        infect_dfs(r-1, c, tick+1)
-        infect_dfs(r, c+1, tick+1)
-        infect_dfs(r, c-1, tick+1)
+        infect_dfs(r + 1, c, tick + 1)
+        infect_dfs(r - 1, c, tick + 1)
+        infect_dfs(r, c + 1, tick + 1)
+        infect_dfs(r, c - 1, tick + 1)
 
-    infect_dfs(*initial_infected, 0) 
+    infect_dfs(*initial_infected, 0)
 
     max_tick = 0
     for r in range(ROWS):
@@ -159,17 +158,18 @@ def handleTwo(grid):
             if grid[r][c] == 1:
                 return -1
             elif grid[r][c] == 3:
-                max_tick = max(max_tick, seen.get((r,c), -1))
+                max_tick = max(max_tick, seen.get((r, c), -1))
 
     return max_tick
+
 
 def handleThree(grid):
-    ''' Returns how many ticks needed to infect whole room with horizontal, vertical and diagonal spreading. '''
+    """ Returns how many ticks needed to infect whole room with horizontal, vertical and diagonal spreading. """
     grid = deepcopy(grid)
     ret = {}
 
     # Check for coords of initial infected person
-    initial_infected = (-1,-1)
+    initial_infected = (-1, -1)
     ROWS, COLS = len(grid), len(grid[0])
     for r in range(ROWS):
         for c in range(COLS):
@@ -178,42 +178,40 @@ def handleThree(grid):
                 break
         if initial_infected[0] != -1:
             break
-    
+
     # Simulate infection
-    
+
     seen = {}
+
     def infect_dfs(r, c, tick):
         # logging.info(f"r: {r}, c: {c}, tick: {tick}")
 
         if r == -1 or r == ROWS or c == -1 or c == COLS:
             # logging.info("Return due to OOB")
             return
-        if (r,c) in seen:
-            # logging.info("Return due to in seen")
+        if (r, c) in seen:
+            seen[(r, c)] = min(seen.get(r, c), tick)
             return
         if grid[r][c] == 2 or grid[r][c] == 0:
-            seen[(r,c)] = -1
+            seen[(r, c)] = -1
             # logging.info("Return due to not healthy")
             return
 
-
         grid[r][c] = 3
-        seen[(r,c)] = tick
+        seen[(r, c)] = tick
         # logging.info("Infected a new person!")
-        
 
-        infect_dfs(r+1, c, tick+1)
-        infect_dfs(r-1, c, tick+1)
-        infect_dfs(r, c+1, tick+1)
-        infect_dfs(r, c-1, tick+1)
+        infect_dfs(r + 1, c, tick + 1)
+        infect_dfs(r - 1, c, tick + 1)
+        infect_dfs(r, c + 1, tick + 1)
+        infect_dfs(r, c - 1, tick + 1)
 
-        infect_dfs(r+1, c+1, tick+1)
-        infect_dfs(r+1, c-1, tick+1)
-        infect_dfs(r-1, c+1, tick+1)
-        infect_dfs(r-1, c-1, tick+1)
+        infect_dfs(r + 1, c + 1, tick + 1)
+        infect_dfs(r + 1, c - 1, tick + 1)
+        infect_dfs(r - 1, c + 1, tick + 1)
+        infect_dfs(r - 1, c - 1, tick + 1)
 
-
-    infect_dfs(*initial_infected, 0) 
+    infect_dfs(*initial_infected, 0)
 
     max_tick = 0
     for r in range(ROWS):
@@ -221,18 +219,19 @@ def handleThree(grid):
             if grid[r][c] == 1:
                 return -1
             elif grid[r][c] == 3:
-                max_tick = max(max_tick, seen.get((r,c), -1))
+                max_tick = max(max_tick, seen.get((r, c), -1))
 
     return max_tick
 
+
 def handleFour(grid):
-    ''' Returns amount of energy needed to infect whole room with horizontal, vertical and vacant space spreading. '''
+    """ Returns amount of energy needed to infect whole room with horizontal, vertical and vacant space spreading. """
 
     grid = deepcopy(grid)
     ret = {}
 
     # Check for coords of initial infected person
-    initial_infected = (-1,-1)
+    initial_infected = (-1, -1)
     ROWS, COLS = len(grid), len(grid[0])
     for r in range(ROWS):
         for c in range(COLS):
@@ -241,37 +240,37 @@ def handleFour(grid):
                 break
         if initial_infected[0] != -1:
             break
-    
+
     # Simulate infection
-    
+
     seen = {}
+
     def infect_dfs_vacant(r, c, energy):
         # logging.info(f"r: {r}, c: {c}, energy: {energy}")
 
         if r == -1 or r == ROWS or c == -1 or c == COLS:
             # logging.info("Return due to OOB")
             return
-        if (r,c) in seen:
+        if (r, c) in seen:
             # logging.info("Return due to in seen")
             # Replace with lower energy if possible
-            seen[(r,c)] = min(seen.get(r,c), energy)
+            seen[(r, c)] = min(seen.get(r, c), energy)
             return
         if grid[r][c] == 2 or grid[r][c] == 0:
             # logging.info(f"adding energy at: {r},{c}")
             energy += 1
-            seen[(r,c)] = energy   
+            seen[(r, c)] = energy
 
         else:
             grid[r][c] = 3
-            seen[(r,c)] = energy        
+            seen[(r, c)] = energy
 
-        infect_dfs_vacant(r+1, c, energy)
-        infect_dfs_vacant(r-1, c, energy)
-        infect_dfs_vacant(r, c+1, energy)
-        infect_dfs_vacant(r, c-1, energy)
+        infect_dfs_vacant(r + 1, c, energy)
+        infect_dfs_vacant(r - 1, c, energy)
+        infect_dfs_vacant(r, c + 1, energy)
+        infect_dfs_vacant(r, c - 1, energy)
 
-
-    infect_dfs_vacant(*initial_infected, 0) 
+    infect_dfs_vacant(*initial_infected, 0)
 
     max_energy = 0
     for r in range(ROWS):
@@ -279,9 +278,7 @@ def handleFour(grid):
             if grid[r][c] == 1:
                 return -1
             elif grid[r][c] == 3:
-                max_energy = max(max_energy, seen.get((r,c), -1))
+                max_energy = max(max_energy, seen.get((r, c), -1))
 
     return max_energy
-
-
 
