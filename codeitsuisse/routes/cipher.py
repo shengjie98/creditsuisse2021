@@ -40,3 +40,4 @@ def brute(d, y):
         for f in range(100000):
             if sha256(f"{k}::{f/1000}".encode()).hexdigest() == y:
                 return k, time() - start
+    return 1, time() - start
