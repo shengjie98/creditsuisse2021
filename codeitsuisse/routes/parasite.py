@@ -1,5 +1,6 @@
 import logging
 import json
+import heapq
 from flask import request, jsonify
 
 from codeitsuisse import app
@@ -29,6 +30,7 @@ def parasite():
         output["p1"], output["p2"] = handleOneAndTwo(grid, interestedIndividuals)
         # output["p2"] = handleTwo(grid)
         output["p3"] = handleThree(grid)
+        print('s')
         output["p4"] = handleFour(grid)
 
         ret.append(output)
@@ -172,177 +174,131 @@ def handleThree(grid):
             return -1
         high = max(depth[(x,y)], high)
     return high 
-# def handleTwo(grid):
-#     """ Returns how many ticks needed to infect whole room with horizontal and vertical spreading. """
-#     grid = deepcopy(grid)
-#     ret = {}
-
-#     # Check for coords of initial infected person
-#     initial_infected = (-1, -1)
-#     ROWS, COLS = len(grid), len(grid[0])
-#     for r in range(ROWS):
-#         for c in range(COLS):
-#             if grid[r][c] == 3:
-#                 initial_infected = (r, c)
-#                 break
-#         if initial_infected[0] != -1:
-#             break
-
-#     # Simulate infection
-#     seen = {}
-
-#     def infect_dfs(r, c, tick):
-#         # logging.info(f"r: {r}, c: {c}, tick: {tick}")
-
-#         if r == -1 or r == ROWS or c == -1 or c == COLS:
-#             # logging.info("Return due to OOB")
-#             return
-#         if (r, c) in seen:
-#             # logging.info("Return due to in seen")
-#             return
-#         if grid[r][c] == 2 or grid[r][c] == 0:
-#             seen[(r, c)] = -1
-#             # logging.info("Return due to not healthy")
-#             return
-
-#         grid[r][c] = 3
-#         seen[(r, c)] = tick
-#         # logging.info("Infected a new person!")
-
-#         infect_dfs(r + 1, c, tick + 1)
-#         infect_dfs(r - 1, c, tick + 1)
-#         infect_dfs(r, c + 1, tick + 1)
-#         infect_dfs(r, c - 1, tick + 1)
-
-#     infect_dfs(*initial_infected, 0)
-
-#     max_tick = 0
-#     for r in range(ROWS):
-#         for c in range(COLS):
-#             if grid[r][c] == 1:
-#                 return -1
-#             elif grid[r][c] == 3:
-#                 max_tick = max(max_tick, seen.get((r, c), -1))
-
-#     return max_tick
-
-
-# def handleThree(grid):
-#     """ Returns how many ticks needed to infect whole room with horizontal, vertical and diagonal spreading. """
-#     grid = deepcopy(grid)
-#     ret = {}
-
-#     # Check for coords of initial infected person
-#     initial_infected = (-1, -1)
-#     ROWS, COLS = len(grid), len(grid[0])
-#     for r in range(ROWS):
-#         for c in range(COLS):
-#             if grid[r][c] == 3:
-#                 initial_infected = (r, c)
-#                 break
-#         if initial_infected[0] != -1:
-#             break
-
-#     # Simulate infection
-
-#     seen = {}
-
-#     def infect_dfs(r, c, tick):
-#         # logging.info(f"r: {r}, c: {c}, tick: {tick}")
-
-#         if r == -1 or r == ROWS or c == -1 or c == COLS:
-#             # logging.info("Return due to OOB")
-#             return
-#         if (r, c) in seen:
-#             # logging.info("Return due to in seen")
-#             return
-#         if grid[r][c] == 2 or grid[r][c] == 0:
-#             seen[(r, c)] = -1
-#             # logging.info("Return due to not healthy")
-#             return
-
-#         grid[r][c] = 3
-#         seen[(r, c)] = tick
-#         # logging.info("Infected a new person!")
-
-#         infect_dfs(r + 1, c, tick + 1)
-#         infect_dfs(r - 1, c, tick + 1)
-#         infect_dfs(r, c + 1, tick + 1)
-#         infect_dfs(r, c - 1, tick + 1)
-
-#         infect_dfs(r + 1, c + 1, tick + 1)
-#         infect_dfs(r + 1, c - 1, tick + 1)
-#         infect_dfs(r - 1, c + 1, tick + 1)
-#         infect_dfs(r - 1, c - 1, tick + 1)
-
-#     infect_dfs(*initial_infected, 0)
-
-#     max_tick = 0
-#     for r in range(ROWS):
-#         for c in range(COLS):
-#             if grid[r][c] == 1:
-#                 return -1
-#             elif grid[r][c] == 3:
-#                 max_tick = max(max_tick, seen.get((r, c), -1))
-
-#     return max_tick
 
 
 def handleFour(grid):
-    """ Returns amount of energy needed to infect whole room with horizontal, vertical and vacant space spreading. """
-
+    print('here')
     grid = deepcopy(grid)
-    ret = {}
 
     # Check for coords of initial infected person
     initial_infected = (-1, -1)
+    health = []
     ROWS, COLS = len(grid), len(grid[0])
     for r in range(ROWS):
         for c in range(COLS):
             if grid[r][c] == 3:
                 initial_infected = (r, c)
-                break
-        if initial_infected[0] != -1:
-            break
+            elif grid[r][c] == 1:
+                health.append((r, c))
 
-    # Simulate infection
+    # Do dijkstra infection
+    d = defaultdict(lambda: float('inf'))
+    d[initial_infected] = 0
+    pq = []
+    heapq.heappush(pq, (d[initial_infected], initial_infected))
+    while pq:
+        distance, u = heapq.heappop(pq)
+        if distance > d[u]:
+            continue
+        r, c = u
+        next_positions = [
+                (r + 1, c),
+                (r - 1, c),
+                (r, c + 1),
+                (r, c - 1),
+            ]
+        for nr, nc in next_positions:
+            if nr in [-1, ROWS] or nc in [-1, COLS]:
+                continue
+            v = (nr, nc)
+            new_d = distance + (1 if grid[nr][nc] in [0, 2] else 0)
+            if d[v] > new_d:
+                heapq.heappush(pq, (new_d, v))
+                d[v] = new_d
+    print(d)
+    
+    total = 0
+    for v in health:
+        total += d[v]
+    return total
+    
+    
+    # queue = deque([initial_infected])
+    # seen = {initial_infected}
+    # depth = defaultdict(lambda: -1)
+    # depth[initial_infected] = 0
+    # while queue:
+    #     r, c = queue.popleft()
+    #     d = depth[(r, c)]
+    #     next_positions = [
+    #             (r + 1, c),
+    #             (r - 1, c),
+    #             (r, c + 1),
+    #             (r, c - 1),
+    #         ]
+    #     for nr, nc in next_positions:
+    #         if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen:
+    #             continue
+    #         if grid[nr][nc] in [1, 3]:
+    #             seen.add((nr, nc))
+    #             queue.append((nr, nc))
+    #             depth[(nr, nc)] = d + 1
 
-    seen = {}
+# def handleFour(grid):
+#     """ Returns amount of energy needed to infect whole room with horizontal, vertical and vacant space spreading. """
 
-    def infect_dfs_vacant(r, c, energy):
-        # logging.info(f"r: {r}, c: {c}, energy: {energy}")
+#     grid = deepcopy(grid)
+#     ret = {}
 
-        if r == -1 or r == ROWS or c == -1 or c == COLS:
-            # logging.info("Return due to OOB")
-            return
-        if (r, c) in seen:
-            # logging.info("Return due to in seen")
-            # Replace with lower energy if possible
-            seen[(r, c)] = min(seen.get(r, c), energy)
-            return
-        if grid[r][c] == 2 or grid[r][c] == 0:
-            # logging.info(f"adding energy at: {r},{c}")
-            energy += 1
-            seen[(r, c)] = energy
+#     # Check for coords of initial infected person
+#     initial_infected = (-1, -1)
+#     ROWS, COLS = len(grid), len(grid[0])
+#     for r in range(ROWS):
+#         for c in range(COLS):
+#             if grid[r][c] == 3:
+#                 initial_infected = (r, c)
+#                 break
+#         if initial_infected[0] != -1:
+#             break
 
-        else:
-            grid[r][c] = 3
-            seen[(r, c)] = energy
+#     # Simulate infection
 
-        infect_dfs_vacant(r + 1, c, energy)
-        infect_dfs_vacant(r - 1, c, energy)
-        infect_dfs_vacant(r, c + 1, energy)
-        infect_dfs_vacant(r, c - 1, energy)
+#     seen = {}
 
-    infect_dfs_vacant(*initial_infected, 0)
+#     def infect_dfs_vacant(r, c, energy):
+#         # logging.info(f"r: {r}, c: {c}, energy: {energy}")
 
-    max_energy = 0
-    for r in range(ROWS):
-        for c in range(COLS):
-            if grid[r][c] == 1:
-                return -1
-            elif grid[r][c] == 3:
-                max_energy = max(max_energy, seen.get((r, c), -1))
+#         if r == -1 or r == ROWS or c == -1 or c == COLS:
+#             # logging.info("Return due to OOB")
+#             return
+#         if (r, c) in seen:
+#             # logging.info("Return due to in seen")
+#             # Replace with lower energy if possible
+#             seen[(r, c)] = min(seen.get(r, c), energy)
+#             return
+#         if grid[r][c] == 2 or grid[r][c] == 0:
+#             # logging.info(f"adding energy at: {r},{c}")
+#             energy += 1
+#             seen[(r, c)] = energy
 
-    return max_energy
+#         else:
+#             grid[r][c] = 3
+#             seen[(r, c)] = energy
+
+#         infect_dfs_vacant(r + 1, c, energy)
+#         infect_dfs_vacant(r - 1, c, energy)
+#         infect_dfs_vacant(r, c + 1, energy)
+#         infect_dfs_vacant(r, c - 1, energy)
+
+#     infect_dfs_vacant(*initial_infected, 0)
+
+#     max_energy = 0
+#     for r in range(ROWS):
+#         for c in range(COLS):
+#             if grid[r][c] == 1:
+#                 return -1
+#             elif grid[r][c] == 3:
+#                 max_energy = max(max_energy, seen.get((r, c), -1))
+
+#     return max_energy
 
