@@ -140,8 +140,8 @@ def smartChoice(board, player, available):
         
         # Find score using Minimax algorithm
         score = minimax(board = dupBoard,         # use board's copy
-                        maxSymbol = "O",          # maximize for Computer (O)
-                        minSymbol = "X",          # minimize for Human (X)
+                        maxSymbol = player,          # maximize for Computer (O)
+                        minSymbol = "X" if player == "O" else "O",          # minimize for Human (X)
                         depth = 1,                # depth of search tree
                         isMaximizing = False)     # is the next move for O
         
@@ -167,9 +167,9 @@ def minimax(board, maxSymbol, minSymbol, depth, isMaximizing):
     
     if isBoardFull(board) or depth == 0:
         return 0
-    elif isWinner(board, 'O'):
+    elif isWinner(board, maxSymbol):
         return 1
-    elif isWinner(board, 'X'):
+    elif isWinner(board, minSymbol):
         return -1
     # MISSING   # Fill in the missing conditions to stop the recursion
     # You may use the isWinner and isBoardFull functions if you want
@@ -179,7 +179,7 @@ def minimax(board, maxSymbol, minSymbol, depth, isMaximizing):
     available = [position for position, value in board.items() if value == " "]
     
     # Go through all available positions
-    symbol = maxSymbol if isMaximizing else minSymbol
+    symbol = minSymbol if isMaximizing else maxSymbol
     for position in available:
         board[position] = symbol
         score = minimax(board, maxSymbol, minSymbol, depth, not isMaximizing)
