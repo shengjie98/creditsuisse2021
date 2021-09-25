@@ -19,7 +19,11 @@ def perry():
     result = dumb(interviews)
 
     logging.info("My result :{}".format(result))
-    return json.dumps(result)
+    return app.response_class(
+        response=json.dumps(result),
+        status=200,
+        mimetype='application/json'
+    )
 
 def dumb(data):
     ans = []
