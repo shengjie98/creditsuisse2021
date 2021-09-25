@@ -38,5 +38,5 @@ def brute(d, y):
     start = time()
     for k in range(10**d):
         for f in range(100000):
-            if sha256(f"{k}::{f/1000}") == y:
+            if sha256(f"{k}::{f/1000}".encode()).hexdigest() == y:
                 return k, time() - start
