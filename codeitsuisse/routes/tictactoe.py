@@ -35,6 +35,7 @@ def get_id():
                 }
                 logging.info('Before sending')
                 x = requests.post(endpoint, json = to_post)
+                logging.info(x.status_code)
                 logging.info('after sending')
                 updateBoard(board, "NW", player)
 
@@ -61,7 +62,7 @@ def get_id():
                     to_post = {
                         "action": "(╯°□°)╯︵ ┻━┻"
                     }
-                    x = requests.post(endpoint, sjon = to_post)
+                    x = requests.post(endpoint, json = to_post)
 
     # logging.info("My result :{}".format(result))
     return json.dumps(0)
