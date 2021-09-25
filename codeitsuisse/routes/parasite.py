@@ -195,6 +195,7 @@ def handleFour(grid):
     d = defaultdict(lambda: float('inf'))
     d[initial_infected] = 0
     pq = []
+    prev = defaultdict(lambda: None)
     heapq.heappush(pq, (d[initial_infected], initial_infected))
     while pq:
         distance, u = heapq.heappop(pq)
@@ -215,12 +216,17 @@ def handleFour(grid):
             if d[v] > new_d:
                 heapq.heappush(pq, (new_d, v))
                 d[v] = new_d
-    print(d)
+                prev[v] = u
+                
     
     total = 0
+    seen = set()
     for v in health:
-        total += d[v]
-    return total
+        while prev[v]:
+            if grid[v[0]][v[1]] in [0, 2]:
+                seen.add(v)
+            v = prev[v] 
+    return len(seen)
     
     
     # queue = deque([initial_infected])
