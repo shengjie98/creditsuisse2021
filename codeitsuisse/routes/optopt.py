@@ -1,5 +1,6 @@
 import logging
 import json
+from random import random, randrange
 
 from flask import request, jsonify
 
@@ -12,20 +13,38 @@ def optopt():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
 
-    return json.dumps(0)
+    return rngsus(**data)
 
-def helplah(options, views):
-    expected_market_val = 0
-    total_weight = 0
-    for v in views:
-        expected_market_val += v['mean'] * v['weight']
-        total_weight += v['weight']
+# def helplah(options, views):
+#     expected_market_val = 0
+#     total_weight = 0
+#     for v in views:
+#         expected_market_val += v['mean'] * v['weight']
+#         total_weight += v['weight']
 
-    expected_market_val /= total_weight
+#     expected_market_val /= total_weight
 
-    for o in options:
-        continue
-        if o['type'] == 'call':
-            pass
-        # o['expectation'] = 
+#     for o in options:
+#         if o['type'] == 'call':
+#             o['expectation'] = expected_market_val - o['strike'] - o['premium']
+#         else:
+#             o['expectation'] = expected_market_val
 
+
+def rngsus(options, views):
+    rng = [random() for i in range(len(options))]
+    total = sum(rng)
+    for i in range(len(rng)):
+        rng[i] = int(100 * rng[i]/total)
+    
+    total = sum(rng)
+    while total > 100:
+        randind = randrange(0, 100)
+        rng[randind] -= 1
+        total -= 1
+    
+    for i in range(len(rng)):
+        if options[i]['type'] == 'put':
+            rng[i] *= -1
+
+    return rng
