@@ -6,6 +6,8 @@ from codeitsuisse import app
 
 from copy import deepcopy
 
+from collections import deque
+
 logger = logging.getLogger(__name__)
 
 
@@ -72,34 +74,77 @@ def handleOne(grid, interestedIndividuals):
 
     seen = {}
 
-    def infect_dfs(r, c, tick):
-        # logging.info(f"r: {r}, c: {c}, tick: {tick}")
+    # Do bfs infection
+    queue = deque([initial_infected])
+    seen = {}
+    current_tick = -1
+    while queue:
+        current_tick += 1
+        current_length = len(queue)
 
-        if r == -1 or r == ROWS or c == -1 or c == COLS:
-            # logging.info("Return due to OOB")
-            return
-        if (r, c) in seen:
-            seen[(r, c)] = min(seen.get(r, c), tick)
-            return
-        if grid[r][c] == 2 or grid[r][c] == 0:
-            seen[(r, c)] = -1
-            # logging.info("Return due to not healthy")
-            return
+        for _ in range(current_length):
+            r, c = queue.popleft()
 
-        grid[r][c] = 3
-        seen[(r, c)] = tick
-        # logging.info("Infected a new person!")
+            if grid[r][c] == 0 or grid[r][c] == 2:
+                seen[(r, c)] = -1
+            else:
+                seen[(r, c)] = current_tick
 
-        infect_dfs(r + 1, c, tick + 1)
-        infect_dfs(r - 1, c, tick + 1)
-        infect_dfs(r, c + 1, tick + 1)
-        infect_dfs(r, c - 1, tick + 1)
+            # grid[r][c] = 3
+            # Infect and add neighbors to queue
+            next_positions = [
+                (r + 1, c),
+                (r - 1, c),
+                (r, c + 1),
+                (r, c - 1),
+            ]
 
-    infect_dfs(*initial_infected, 0)
+            for pos in next_positions:
+                nr, nc = pos
+
+                if nr == -1 or nr == ROWS or nc == -1 or nc == COLS:
+                    continue
+                if (nr, nc) in seen:
+                    continue
+
+                queue.append(pos)
+
+        logging.info(seen)
+
+    # def infect_dfs(r, c, tick):
+    #     # logging.info(f"r: {r}, c: {c}, tick: {tick}")
+
+    #     if r == -1 or r == ROWS or c == -1 or c == COLS:
+    #         # logging.info("Return due to OOB")
+    #         return
+    #     if (r, c) in seen:
+    #         # logging.info("Return due to in seen")
+    #         seen[(r, c)] = min(seen[(r, c)], tick)
+    #         return
+    #     if grid[r][c] == 2 or grid[r][c] == 0:
+    #         seen[(r, c)] = -1
+    #         # logging.info("Return due to not healthy")
+    #         return
+
+    #     grid[r][c] = 3
+    #     seen[(r, c)] = tick
+    #     # logging.info("Infected a new person!")
+
+    #     infect_dfs(r + 1, c, tick + 1)
+    #     infect_dfs(r - 1, c, tick + 1)
+    #     infect_dfs(r, c + 1, tick + 1)
+    #     infect_dfs(r, c - 1, tick + 1)
+
+    # infect_dfs(*initial_infected, 0)
 
     for ind in interestedIndividuals:
         # Check if ind is already initially infected
+
         ind_pos = tuple(map(int, ind.split(",")))
+        if ind_pos == initial_infected:
+            ret[ind] = -1
+            continue
+
         if ind_pos in seen:
             ret[ind] = seen[(ind_pos[0], ind_pos[1])]
         else:
@@ -134,7 +179,7 @@ def handleTwo(grid):
             # logging.info("Return due to OOB")
             return
         if (r, c) in seen:
-            seen[(r, c)] = min(seen.get(r, c), tick)
+            # logging.info("Return due to in seen")
             return
         if grid[r][c] == 2 or grid[r][c] == 0:
             seen[(r, c)] = -1
@@ -190,7 +235,7 @@ def handleThree(grid):
             # logging.info("Return due to OOB")
             return
         if (r, c) in seen:
-            seen[(r, c)] = min(seen.get(r, c), tick)
+            # logging.info("Return due to in seen")
             return
         if grid[r][c] == 2 or grid[r][c] == 0:
             seen[(r, c)] = -1
