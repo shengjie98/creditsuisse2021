@@ -86,8 +86,10 @@ def handleOne(grid, interestedIndividuals):
                 (r, c - 1),
             ]
         for nr, nc in next_positions:
+            print(nr, nc)
             if nr in [-1, ROWS] or nc in [-1, COLS] or (nr, nc) in seen or grid[nr][nc] != 1:
-                pass
+                continue
+            seen.add((nr, nc))
             queue.append((nr, nc))
             depth[(nr, nc)] = d + 1
     for s in interestedIndividuals:
