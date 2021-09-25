@@ -10,3 +10,4 @@ import codeitsuisse.routes.stockhunter
 import codeitsuisse.routes.quoridor
 import codeitsuisse.routes.cipher
 import codeitsuisse.routes.decode
+import codeitsuisse.routes.race
