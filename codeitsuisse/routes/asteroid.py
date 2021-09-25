@@ -46,7 +46,7 @@ def ast(seq: str):
 
     res = {
         "input": seq,
-        "score": res[0],
+        "score": int(res[0]) if int(res[0]) == res[0] else res[0],
         "origin": origin
     }
 
