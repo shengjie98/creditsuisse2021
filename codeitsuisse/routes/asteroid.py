@@ -42,11 +42,11 @@ def ast(seq: str):
     # print(sum(cleanlens))
     # print(res)
 
-    origin = sum(cleanlens[:res[1]]) + cleanlens[res[1]] // 2 - (cleanlens[res[1]]%2 == 0)
+    origin = sum(cleanlens[:res[1]]) + cleanlens[res[1]] // 2
 
     res = {
         "input": seq,
-        "score": res[0],
+        "score": int(res[0]) if int(res[0]) == res[0] else res[0],
         "origin": origin
     }
 
@@ -60,13 +60,18 @@ def multiplier(length: int):
 
 def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens: list, pos: list, prop: list):
     if start == end:
-        prop[start][end] = cleanlens[start] > 2
-        if prop:
+        prop[start][end] = True
+        if cleanlens[start] == 2:
+            prop[start][end] = False
+        elif cleanlens[start] == 1:
+            if start == 0 or end == len(cleanlens) - 1 or (cleanstr[start-1] != cleanstr[end+1]):
+                prop[start][end] = False
+        if prop[start][end]:
             dp[start][end] = multiplier(cleanlens[start])
         else:
-            dp[start][end] = 0
+            dp[start][end] = 1
         pos[start][end] = start
-        return dp[start][end], pos[start][end], prop
+        return dp[start][end], pos[start][end], prop[start][end]
     
     if dp[start][end] > 0:
         return dp[start][end], pos[start][end], prop[start][end]
@@ -87,9 +92,11 @@ def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens
             if take_start[0] > take_end[0]:
                 dp[start][end] = take_start[0]
                 pos[start][end] = take_start[1]
+                prop[start][end] = take_start[2]
             else:
                 dp[start][end] = take_end[0]
                 pos[start][end] = take_end[1]
+                prop[start][end] = take_end[2]
 
         else:
             sub = longest_palindrome(cleanstr, start+1, end-1, dp, cleanlens, pos, prop)

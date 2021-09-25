@@ -51,7 +51,7 @@ def rngsus(options, view):
     
     total = sum(rng)
     while total > 100:
-        randind = randrange(0, 100)
+        randind = randrange(0, len(options))
         rng[randind] -= 1
         total -= 1
     
@@ -60,4 +60,6 @@ def rngsus(options, view):
             rng[i] *= -1
 
     return rng
+    
+
     
