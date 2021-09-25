@@ -130,7 +130,7 @@ def stonks():
             timeline[end][end_company]["qty"] -= max_buy
             cost = max_buy * timeline[end][end_company]["price"]
             seq.extend([f'b-{end_company}-{max_buy}', f'j-{end}-2037', f's-{end_company}-{max_buy}'])
-            profit = max_buy * timeline[start][end_company]["price"]
+            profit = max_buy * timeline[end][end_company]["price"]
             capital = capital + profit - cost
         else:
             seq.append(f'j-{end}-2037')
