@@ -14,7 +14,6 @@ def parasite():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
     inputValue = data
-    logging.info("Input", inputValue)
 
     ret = []
 
