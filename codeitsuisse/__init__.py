@@ -1,4 +1,5 @@
 from flask import Flask
+
 app = Flask(__name__)
 import codeitsuisse.routes.square
 import codeitsuisse.routes.optopt
@@ -10,4 +11,5 @@ import codeitsuisse.routes.stockhunter
 import codeitsuisse.routes.quoridor
 import codeitsuisse.routes.cipher
 import codeitsuisse.routes.decode
+import codeitsuisse.routes.stig.perry
 import codeitsuisse.routes.race
