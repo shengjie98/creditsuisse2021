@@ -35,7 +35,7 @@ def stonks():
                 high = diff
         end = best[0][1]
         start = best[1][1]
-        print(start, end)
+        # print(start, end)
         
         to_start = 2037 - int(start)
         to_end = 2037 - int(end)
@@ -135,10 +135,14 @@ def stonks():
         else:
             seq.append(f'j-{end}-2037')
         ans.append(seq)
-        
-        
-        
-    return json.dumps(seq)
+
+
+    response = app.response_class(
+        response=json.dumps(ans),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 
