@@ -65,11 +65,11 @@ def longest_palindrome(cleanstr: list, start: int, end: int, dp: list, cleanlens
             take_start = longest_palindrome(cleanstr, start, end-1, dp, cleanlens, pos)
             take_end = longest_palindrome(cleanstr, start+1, end, dp, cleanlens, pos)
 
-            if start == 0 and end == len(cleanstr)-1:
-                _start = longest_palindrome(cleanstr, start, start, dp, cleanlens, pos)
-                _end = longest_palindrome(cleanstr, end, end, dp, cleanlens, pos)
-                take_start = take_start[0] + _end[0], take_start[1]
-                take_end = take_end[0] + _start[0], take_end[1]
+            # if start == 0 and end == len(cleanstr)-1:
+            #     _start = longest_palindrome(cleanstr, start, start, dp, cleanlens, pos)
+            #     _end = longest_palindrome(cleanstr, end, end, dp, cleanlens, pos)
+            #     take_start = take_start[0] + _end[0], take_start[1]
+            #     take_end = take_end[0] + _start[0], take_end[1]
 
             if take_start[0] > take_end[0]:
                 dp[start][end] = take_start[0]
