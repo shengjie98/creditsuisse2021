@@ -68,7 +68,8 @@ def decode():
     
     if not history:
         best_guess = [possible_values[0]] * (num_slots // 2) + [possible_values[1]] * (num_slots - num_slots // 2)
-        # return json.dumps(guess)
+    elif len(history) == 1:
+        best_guess = [possible_values[-2]] * (num_slots // 2) + [possible_values[-1]] * (num_slots - num_slots // 2)
     else:
         possible = []
         for s in all_repeat(possible_values, num_slots):
