@@ -10,6 +10,7 @@ from codeitsuisse import app
 logger = logging.getLogger(__name__)
 
 url = "https://cis2021-arena.herokuapp.com/tic-tac-toe/start/"
+play_url = "https://cis2021-arena.herokuapp.com/tic-tac-toe/play/"
 
 @app.route('/tic-tac-toe', methods=['POST'])
 def get_id():
@@ -17,6 +18,7 @@ def get_id():
     logging.info("data sent for evaluation {}".format(data))
     battleId = data['battleId']
     endpoint = url + battleId
+    play_end = play_url + battleId
 
     stream_response = requests.get(endpoint, stream=True)
     client = sseclient.SSEClient(stream_response)
@@ -33,9 +35,8 @@ def get_id():
                     "action": 'putSymbol',
                     "position": "NW"
                 }
-                logging.info('Before sending')
-                x = requests.post(endpoint, json = to_post)
-                logging.info('after sending')
+                x = requests.post(play_end, json = to_post)
+                logging.info(x.status_code, to_post)
                 updateBoard(board, "NW", player)
 
         elif d.get('winner'):
@@ -45,23 +46,30 @@ def get_id():
                 # means we just made a move
                 continue
             elif d.get('action') == 'putSymbol':
-                action = d['action']
-                if validMove(board, action):
-                    updateBoard(board, action, d['player'])
+                position = d['position']
+                if position and  validMove(board, position):
+                    updateBoard(board, position, d['player'])
                     move = computeMove(board, player)
-                    updateBoard(board, move, player)
-                    # TODO send post to make move
-                    to_post = {
-                        "action": 'putSymbol',
-                        "position": move
-                    }
-                    x = requests.post(endpoint, json = to_post)
+                    if move:
+                        updateBoard(board, move, player)
+                        # TODO send post to make move
+                        to_post = {
+                            "action": 'putSymbol',
+                            "position": move
+                        }
+                        x = requests.post(play_end, json=to_post)
+                        logging.info(x.status_code, to_post)
                 else:
                     # TODO flip table
                     to_post = {
                         "action": "(╯°□°)╯︵ ┻━┻"
                     }
-                    x = requests.post(endpoint, sjon = to_post)
+                    x = requests.post(play_end, json = to_post)
+                    logging.info(x.status_code, to_post)
+                    break
+            else:
+                break
+                    
 
     # logging.info("My result :{}".format(result))
     return json.dumps(0)
@@ -134,8 +142,8 @@ def smartChoice(board, player, available):
         
         # Find score using Minimax algorithm
         score = minimax(board = dupBoard,         # use board's copy
-                        maxSymbol = "O",          # maximize for Computer (O)
-                        minSymbol = "X",          # minimize for Human (X)
+                        maxSymbol = player,          # maximize for Computer (O)
+                        minSymbol = "X" if player == "O" else "O",          # minimize for Human (X)
                         depth = 1,                # depth of search tree
                         isMaximizing = False)     # is the next move for O
         
@@ -161,9 +169,9 @@ def minimax(board, maxSymbol, minSymbol, depth, isMaximizing):
     
     if isBoardFull(board) or depth == 0:
         return 0
-    elif isWinner(board, 'O'):
+    elif isWinner(board, maxSymbol):
         return 1
-    elif isWinner(board, 'X'):
+    elif isWinner(board, minSymbol):
         return -1
     # MISSING   # Fill in the missing conditions to stop the recursion
     # You may use the isWinner and isBoardFull functions if you want
@@ -173,7 +181,7 @@ def minimax(board, maxSymbol, minSymbol, depth, isMaximizing):
     available = [position for position, value in board.items() if value == " "]
     
     # Go through all available positions
-    symbol = 'O' if isMaximizing else 'X'
+    symbol = maxSymbol if isMaximizing else minSymbol
     for position in available:
         board[position] = symbol
         score = minimax(board, maxSymbol, minSymbol, depth, not isMaximizing)
