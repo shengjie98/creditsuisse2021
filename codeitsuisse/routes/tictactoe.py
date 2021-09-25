@@ -38,8 +38,9 @@ def get_id():
                 x = requests.post(play_end, json = to_post)
                 logging.info(x.status_code, to_post)
                 updateBoard(board, "NW", player)
-
         elif d.get('winner'):
+            break
+        elif d.get('action') == "(╯°□°)╯︵ ┻━┻":
             break
         else:
             if d['player'] == player:
@@ -47,7 +48,7 @@ def get_id():
                 continue
             elif d.get('action') == 'putSymbol':
                 position = d['position']
-                if position and  validMove(board, position):
+                if position and validMove(board, position):
                     updateBoard(board, position, d['player'])
                     move = computeMove(board, player)
                     if move:
@@ -66,12 +67,9 @@ def get_id():
                     }
                     x = requests.post(play_end, json = to_post)
                     logging.info(x.status_code, to_post)
-                    break
             else:
                 break
                     
-
-    # logging.info("My result :{}".format(result))
     return json.dumps(0)
 
 def createBoard():
