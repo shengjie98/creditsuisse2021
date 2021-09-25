@@ -95,4 +95,5 @@ def decode():
         status=200,
         mimetype='application/json'
     )
+    logging.info(json.dumps(best_guess))
     return response
