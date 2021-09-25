@@ -60,6 +60,7 @@ def all_repeat(str1, rno):
 @app.route('/decoder', methods=['POST'])
 def decode():
     data = request.get_json()
+    logging.info("data sent for evaluation {}".format(data))
     possible_values = data['possible_values']
     num_slots = data['num_slots']
     history = data['history']
