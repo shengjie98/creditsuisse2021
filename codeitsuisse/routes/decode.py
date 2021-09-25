@@ -3,7 +3,7 @@ import json
 
 from flask import request, jsonify
 from itertools import product
-
+import random
 from codeitsuisse import app
 
 logger = logging.getLogger(__name__)
@@ -67,9 +67,22 @@ def decode():
     possible_results = get_possible_results(num_slots)
     
     if not history:
-        best_guess = [possible_values[0]] * (num_slots // 2) + [possible_values[1]] * (num_slots - num_slots // 2)
+        best_guess = random.choice(list(all_repeat(possible_values, num_slots)))
+        # best_guess = [possible_values[0]] * (num_slots // 2) + [possible_values[1]] * (num_slots - num_slots // 2)
     elif len(history) == 1:
-        best_guess = [possible_values[-2]] * (num_slots // 2) + [possible_values[-1]] * (num_slots - num_slots // 2)
+        possible = []
+        for s in all_repeat(possible_values, num_slots):
+            flag = True
+            for h in history:
+                guess = tuple(h['output_received'])
+                result = h['result']
+                if not clear_criteria(s, guess, result):
+                    flag = False
+                    break
+            if flag:
+                possible.append(s)
+        best_guess = random.choice(possible)
+        # best_guess = [possible_values[-2]] * (num_slots // 2) + [possible_values[-1]] * (num_slots - num_slots // 2)
     else:
         possible = []
         for s in all_repeat(possible_values, num_slots):
