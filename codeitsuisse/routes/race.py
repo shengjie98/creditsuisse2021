@@ -28,7 +28,7 @@ def race():
     
     
     swimmers = data.split(',')
-    swimmers.sort(key=lambda x: ctr[x])     
+    swimmers.sort(key=lambda x: ctr[x], reverse=True)     
     return ','.join(swimmers)
 
 
