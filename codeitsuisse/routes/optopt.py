@@ -13,7 +13,7 @@ def optopt():
     data = request.get_json()
     logging.info("data sent for evaluation {}".format(data))
 
-    return rngsus(**data)
+    return json.dumps(rngsus(**data))
 
 # def helplah(options, views):
 #     expected_market_val = 0
@@ -48,3 +48,4 @@ def rngsus(options, view):
             rng[i] *= -1
 
     return rng
+    
