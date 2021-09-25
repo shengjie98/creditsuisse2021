@@ -25,6 +25,7 @@ def get_id():
 
     # Loop forever (while connection "open")
     for i, event in enumerate(client.events()):
+        print(len(client.events()))
         logging.info(event.data)
         d = json.loads(event.data)
         if i == 0:
@@ -67,7 +68,6 @@ def get_id():
                     }
                     x = requests.post(play_end, json = to_post)
                     logging.info(x.status_code, to_post)
-                    
             else:
                 break
                     
