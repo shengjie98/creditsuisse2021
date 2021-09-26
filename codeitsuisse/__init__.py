@@ -12,4 +12,5 @@ import codeitsuisse.routes.quoridor
 import codeitsuisse.routes.cipher
 import codeitsuisse.routes.decode
 import codeitsuisse.routes.stig.perry
+import codeitsuisse.routes.stig.ben
 import codeitsuisse.routes.race
