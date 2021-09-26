@@ -36,6 +36,7 @@ def dumb(test_case):
     arr.append((1e9, -1, True))
     arr.sort(key=lambda x: x[2])
     arr.sort(key=lambda x: x[0])
+    logging.info("made arr")
     S = []
     ans = []
     for i in range(1, len(arr)):
@@ -49,7 +50,8 @@ def dumb(test_case):
         m_prime = m if f else m - 1
         if n_prime <= m_prime:
             ans.append(','.join(map(str, sorted(tuple(S)))))
-    p = len(list(ans))
+    p = len(set(ans))
+    logging.info("after getting ans")
     q = 1000000000
     factor = gcd(p, q)
     return {
