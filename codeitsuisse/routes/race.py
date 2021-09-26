@@ -5,7 +5,7 @@ from flask import request, jsonify
 
 from collections import Counter, defaultdict
 from codeitsuisse import app
-import numpy as np
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -16,15 +16,9 @@ def random_race():
     logging.info("data sent for evaluation {}".format(data))
 
     swimmers = data.split(",")
-    indexes = [x for x in range(10)]
+    random.shuffle(swimmers)
 
-    np.random.shuffle(indexes)
-
-    output = []
-    for index in indexes:
-        output.append(swimmers[index])
-
-    return ",".join(output)
+    return ",".join(swimmers)
 
 
 def race_2():
