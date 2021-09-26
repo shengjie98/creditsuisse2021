@@ -21,26 +21,25 @@ def crack():
     hashes = {}
 
     for i, d in enumerate(data):
-        if d['D'] < 4:
+        if d['D'] <= 4:
             hashes[d['Y']] = i
         else:
             break
 
-    for k in range(1, 10**3):
-        for f in range(1, 100000):
-            try:
-                ind = hashes.get(sha256(f"{k}::{f/1000}".encode()).hexdigest())
+    for k in range(1, 10**4+1):
+        for f in range(1, 100001):
+            ind = hashes.get(sha256(f"{k}::{f/1000}".encode()).hexdigest())
+            if ind is not None:
                 ans[ind] = k
-            except:
-                continue
+                print(ans)
         
-    return json.dumps(ans[::-1])
+    return json.dumps(ans)
 
 
 def brute(d, y, f_floor):
     start = time()
-    for k in range(10**d):
-        for f in range(100000):
+    for k in range(10**d+1):
+        for f in range(100001):
             if sha256(f"{k}::{f/1000}".encode()).hexdigest() == y:
                 return k, f, time() - start
     return randint(1, 10**d), f_floor, time() - start
