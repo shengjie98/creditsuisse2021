@@ -19,7 +19,7 @@ def ben():
     # result = interpret_interviews(interviews)
     result = []
     for test_case in interviews:
-        p = 175500 + random.randint(-300, 300)
+        p = 173500 + random.randint(-300, 300)
         logging.info("after getting ans")
         q = 1000000000
         factor = gcd(p, q)
