@@ -49,8 +49,8 @@ def dumb(data):
             n_prime = n + 1 if e else n
             m_prime = m if f else m - 1
             if n_prime <= m_prime:
-                ans.append((n_prime, m_prime, S.copy()))
-        all_possible_sets = {tuple(sorted(tuple(n[2]))) for n in ans}
+                ans.append((n_prime, m_prime, tuple(sorted(tuple(S)))))
+        all_possible_sets = {n[2] for n in ans}
         print(all_possible_sets)
         p = len(all_possible_sets)
         q = 1e9
