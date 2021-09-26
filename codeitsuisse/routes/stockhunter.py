@@ -79,18 +79,14 @@ def handle_testcase(testcase):
             elif risk_level % 3 == 2:
                 risk_cost = "S"
             this_row.append(risk_cost)
-        grid_map.append(this_row)   
-        
-    grid_map, _, _= make_grid(testcase) 
-    corner = math.ceil((end[1]+1)*1.5), math.ceil((end[0]+1)*1.5)
-    
-    letter_to_num = {
-        "L": 3, 
-        "M" : 2, 
-        "S": 1
-    }
+        grid_map.append(this_row)
+
+    grid_map, _, _ = make_grid(testcase)
+    corner = math.ceil((end[1] + 1) * 1.5), math.ceil((end[0] + 1) * 1.5)
+
+    letter_to_num = {"L": 3, "M": 2, "S": 1}
     # dijkstra
-    d = defaultdict(lambda: float('inf'))
+    d = defaultdict(lambda: float("inf"))
     d[start] = 0
     pq = []
     prev = defaultdict(lambda: None)
@@ -103,11 +99,11 @@ def handle_testcase(testcase):
             continue
         x, y = u
         next_positions = [
-                (y + 1, x),
-                (y - 1, x),
-                (y, x + 1),
-                (y, x - 1),
-            ]
+            (y + 1, x),
+            (y - 1, x),
+            (y, x + 1),
+            (y, x - 1),
+        ]
         for nr, nc in next_positions:
             if nr in [-1, corner[1]] or nc in [-1, corner[0]]:
                 continue
@@ -125,19 +121,15 @@ def handle_testcase(testcase):
         max_x = max(x, max_x)
         max_y = max(y, max_y)
         v = prev[v]
-    
+
     # make grid map
-    final_grid = [row[:max_x+1] for row in grid_map[:max_y+1]]
-    output = {
-        "gridMap": final_grid,
-        "minimumCost": d[end]
-    }
+    final_grid = [row[: max_x + 1] for row in grid_map[: max_y + 1]]
+    output = {"gridMap": final_grid, "minimumCost": d[end]}
     return output
-        
-        
-        
-#     ## bullshit below    
-    
+
+
+#     ## bullshit below
+
 #     results = []
 #     keys = "LMS"
 #     convert = lambda x: keys[3 - x]
@@ -273,24 +265,21 @@ def handle_testcase(testcase):
 #     logging.info("My results :{}".format(results))
 #     return json.dumps(results)
 
+
 def make_grid(data: dict):
-    num_to_letter = {
-        1: "S",
-        2: "M",
-        3: 'L'
-    }
-    start = data['entryPoint']['first'], data['entryPoint']['second']
-    end = data['targetPoint']['first'], data['targetPoint']['second']
+    num_to_letter = {1: "S", 2: "M", 3: "L"}
+    start = data["entryPoint"]["first"], data["entryPoint"]["second"]
+    end = data["targetPoint"]["first"], data["targetPoint"]["second"]
 
-    depth = data['gridDepth']
-    key = data['gridKey']
-    h_stepper = data['horizontalStepper']
-    v_stepper = data['verticalStepper']
+    depth = data["gridDepth"]
+    key = data["gridKey"]
+    h_stepper = data["horizontalStepper"]
+    v_stepper = data["verticalStepper"]
 
-    corner = math.ceil((end[1]+1)*1.5), math.ceil((end[0]+1)*1.5)
+    corner = math.ceil((end[1] + 1) * 1.5), math.ceil((end[0] + 1) * 1.5)
     print(corner)
 
-    grid = [[0]*corner[0] for i in range(corner[1])]
+    grid = [[0] * corner[0] for i in range(corner[1])]
 
     for row in range(corner[1]):
         for col in range(corner[0]):
@@ -301,14 +290,13 @@ def make_grid(data: dict):
             elif col == 0:
                 index = v_stepper * row
             else:
-                index = grid[row][col-1] * grid[row-1][col]
+                index = grid[row][col - 1] * grid[row - 1][col]
 
             grid[row][col] = (index + depth) % key
 
     for row in range(corner[1]):
         for col in range(corner[0]):
             grid[row][col] = num_to_letter[3 - grid[row][col] % 3]
-
 
     return grid, start, end
 
