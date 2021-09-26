@@ -36,20 +36,20 @@ def dumb(test_case):
     arr.append((1e9, -1, True))
     arr.sort(key=lambda x: x[2])
     arr.sort(key=lambda x: x[0])
-    S = set()
-    ans = set()
+    S = []
+    ans = []
     for i in range(1, len(arr)):
         n, a, e = arr[i-1]
         m, _, f = arr[i]
         if e == False:
-            S.add(a)
+            S.append(a)
         else:
             S.remove(a)
         n_prime = n + 1 if e else n
         m_prime = m if f else m - 1
         if n_prime <= m_prime:
-            ans.add(','.join(map(str, sorted(tuple(S)))))
-    p = len(ans)
+            ans.append(','.join(map(str, sorted(tuple(S)))))
+    p = len(list(ans))
     q = 1000000000
     factor = gcd(p, q)
     return {
