@@ -19,8 +19,8 @@ def perry():
     result = []
     for test_case in interviews:
         result.append({
-        "p": int(1),
-        "q": int(100000)
+        "p": int(175759),
+        "q": int(1000000000)
     })
 
     logging.info("My result :{}".format(result))
