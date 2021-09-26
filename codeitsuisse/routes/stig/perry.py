@@ -26,19 +26,50 @@ def perry():
     )
 
 def dumb(data):
-    ans = []
+    res = []
     for test_case in data:
         logging.info(len(test_case['questions']))
-        p = 0
-        for q in test_case['questions']:
-            p += q[0]["to"] - q[0]["from"]
+        arr = []
+        for i, q in enumerate(test_case['questions']):
+            arr.append((q[0]["from"], i, False))
+            arr.append((q[0]["to"], i, True))
+        arr.append((1, -1, False))
+        arr.append((1e9, -1, True))
+        arr.sort(key=lambda x: x[2])
+        arr.sort(key=lambda x: x[0])
+        S = set()
+        ans = []
+        for i in range(1, len(arr)):
+            n, a, e = arr[i-1]
+            m, b, f = arr[i]
+            if e == False:
+                S.add(a)
+            else:
+                S.remove(a)
+            n_prime = n + 1 if e else n
+            m_prime = m if f else m - 1
+            if n_prime <= m_prime:
+                ans.append((n_prime, m_prime, S.copy()))
+        all_possible_sets = {tuple(sorted(tuple(n[2]))) for n in ans}
+        print(all_possible_sets)
+        p = len(all_possible_sets)
+        q = 1e9
+        factor = gcd(p, q)
+        res.append({
+            "p": int(p//factor),
+            "q": int(q//factor)
+        })
+    return res
 
-        q = test_case["maxRating"]
-        hcf = gcd(p, q)
+def gcd(a,b):
+    if a == 0:
+        return b
+    return gcd(b % a, a)
+ 
+# Function to return LCM of two numbers
+def lcm(a,b):
+    return (a / gcd(a,b))* b
 
-        ans.append({"p": p//hcf, "q": q//hcf})
-
-    return ans
 
 
 def interpret_interviews(interviews: list):
